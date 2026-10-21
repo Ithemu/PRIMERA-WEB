@@ -156,23 +156,29 @@ const cartDrawer = $('#cartDrawer');
 const overlay = $('#overlay');
 
 function openCart() {
-  cartDrawer.classList.add('open');
-  cartDrawer.setAttribute('aria-hidden', 'false');
-  overlay.hidden = false;
+  if (cartDrawer) {
+    cartDrawer.classList.add('open');
+    cartDrawer.setAttribute('aria-hidden', 'false');
+  }
+  if (overlay) overlay.style.display = '';
 }
 
 function closeCart() {
-  cartDrawer.classList.remove('open');
-  cartDrawer.setAttribute('aria-hidden', 'true');
-  overlay.hidden = true;
+  if (cartDrawer) {
+    cartDrawer.classList.remove('open');
+    cartDrawer.setAttribute('aria-hidden', 'true');
+  }
+  if (overlay) overlay.style.display = 'none';
 }
 
 $('#cartToggle').addEventListener('click', openCart);
 $('#cartClose').addEventListener('click', closeCart);
-overlay.addEventListener('click', () => {
-  closeCart();
-  closePayment();
-});
+if (overlay) {
+  overlay.addEventListener('click', () => {
+    closeCart();
+    closePayment();
+  });
+}
 
 /* ---------- Modal de pago ---------- */
 const paymentModal = $('#paymentModal');
@@ -180,20 +186,19 @@ const paymentModal = $('#paymentModal');
 function openPayment() {
   if (cart.length === 0) return;
   $('#paymentAmount').textContent = formatCLP(getTotal());
-  paymentModal.hidden = false;
-  overlay.hidden = false;
+  if (paymentModal) paymentModal.style.display = '';
+  if (overlay) overlay.style.display = '';
 }
 
 function closePayment() {
-  paymentModal.hidden = true;
-  if (!cartDrawer.classList.contains('open')) overlay.hidden = true;
+  if (paymentModal) paymentModal.style.display = 'none';
+  if (overlay && (!cartDrawer || !cartDrawer.classList.contains('open'))) {
+    overlay.style.display = 'none';
+  }
 }
 
 $('#checkoutBtn').addEventListener('click', openPayment);
 $('#paymentClose').addEventListener('click', closePayment);
-$('#paymentClose').addEventListener('click', () => {
-  paymentModal.hidden = true;
-});
 
 $('#confirmPay').addEventListener('click', () => {
   const method = $('input[name="payMethod"]:checked').value;
