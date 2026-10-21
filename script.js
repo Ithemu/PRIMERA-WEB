@@ -191,6 +191,9 @@ function closePayment() {
 
 $('#checkoutBtn').addEventListener('click', openPayment);
 $('#paymentClose').addEventListener('click', closePayment);
+$('#paymentClose').addEventListener('click', () => {
+  paymentModal.hidden = true;
+});
 
 $('#confirmPay').addEventListener('click', () => {
   const method = $('input[name="payMethod"]:checked').value;
