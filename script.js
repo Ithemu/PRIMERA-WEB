@@ -136,9 +136,9 @@ function renderCart() {
     `).join('');
   }
 
-  totalEl.textContent = formatCLP(getTotal());
-  countEl.textContent = getCount();
-  checkoutBtn.disabled = cart.length === 0;
+  if (totalEl) totalEl.textContent = formatCLP(getTotal());
+  if (countEl) countEl.textContent = getCount();
+  if (checkoutBtn) checkoutBtn.disabled = cart.length === 0;
 }
 
 /* Delegación de eventos del carrito */
@@ -171,8 +171,10 @@ function closeCart() {
   if (overlay) overlay.style.display = 'none';
 }
 
-$('#cartToggle').addEventListener('click', openCart);
-$('#cartClose').addEventListener('click', closeCart);
+const cartToggle = $('#cartToggle');
+const cartClose = $('#cartClose');
+if (cartToggle) cartToggle.addEventListener('click', openCart);
+if (cartClose) cartClose.addEventListener('click', closeCart);
 if (overlay) {
   overlay.addEventListener('click', () => {
     closeCart();
@@ -185,7 +187,8 @@ const paymentModal = $('#paymentModal');
 
 function openPayment() {
   if (cart.length === 0) return;
-  $('#paymentAmount').textContent = formatCLP(getTotal());
+  const amountEl = $('#paymentAmount');
+  if (amountEl) amountEl.textContent = formatCLP(getTotal());
   if (paymentModal) paymentModal.style.display = '';
   if (overlay) overlay.style.display = '';
 }
@@ -197,19 +200,25 @@ function closePayment() {
   }
 }
 
-$('#checkoutBtn').addEventListener('click', openPayment);
-$('#paymentClose').addEventListener('click', closePayment);
+const checkoutBtn = $('#checkoutBtn');
+const paymentClose = $('#paymentClose');
+const confirmPay = $('#confirmPay');
 
-$('#confirmPay').addEventListener('click', () => {
-  const method = $('input[name="payMethod"]:checked').value;
-  const total = formatCLP(getTotal());
-  showToast(`✅ Pago simulado con ${method} por ${total}`);
-  cart = [];
-  saveCart();
-  renderCart();
-  closePayment();
-  closeCart();
-});
+if (checkoutBtn) checkoutBtn.addEventListener('click', openPayment);
+if (paymentClose) paymentClose.addEventListener('click', closePayment);
+
+if (confirmPay) {
+  confirmPay.addEventListener('click', () => {
+    const method = $('input[name="payMethod"]:checked').value;
+    const total = formatCLP(getTotal());
+    showToast(`✅ Pago simulado con ${method} por ${total}`);
+    cart = [];
+    saveCart();
+    renderCart();
+    closePayment();
+    closeCart();
+  });
+}
 
 /* ---------- Selector de modo ---------- */
 const modeCards = $$('.mode-card');
@@ -227,14 +236,16 @@ function selectMode(mode) {
     sec.classList.toggle('active', sec.dataset.modeSection === mode);
   });
 
-  modeHint.textContent = mode === 'stock'
-    ? '🛍️ ¡Genial! Explora el catálogo en stock.'
-    : '✨ ¡Perfecto! Cuéntanos tu idea personalizada.';
+  if (modeHint) {
+    modeHint.textContent = mode === 'stock'
+      ? '🛍️ ¡Genial! Explora el catálogo en stock.'
+      : '✨ ¡Perfecto! Cuéntanos tu idea personalizada.';
+  }
 
-  // Navega a la "página" correspondiente dentro de la misma hoja
-  const target = mode === 'stock' ? '#catalogo' : '#personalizados';
+  // Navega a la página correspondiente
+  const target = mode === 'stock' ? 'catalogo.html' : 'personalizados.html';
   setTimeout(() => {
-    location.hash = target;
+    window.location.href = target;
   }, 250);
 }
 
@@ -249,37 +260,41 @@ modeCards.forEach((card) => {
 });
 
 /* ---------- Formulario personalizado → WhatsApp ---------- */
-$('#customForm').addEventListener('submit', (e) => {
-  e.preventDefault();
+const customForm = $('#customForm');
+if (customForm) {
+  customForm.addEventListener('submit', (e) => {
+    e.preventDefault();
 
-  const tipo = $('#tipo').value;
-  const tamano = $('#tamano').value;
-  const colores = $('#colores').value.trim() || 'A definir';
-  const nombre = $('#nombre').value.trim();
-  const detalles = $('#detalles').value.trim() || 'Sin detalles adicionales';
+    const tipo = $('#tipo').value;
+    const tamano = $('#tamano').value;
+    const colores = $('#colores').value.trim() || 'A definir';
+    const nombre = $('#nombre').value.trim();
+    const detalles = $('#detalles').value.trim() || 'Sin detalles adicionales';
 
-  if (!nombre) {
-    showToast('Por favor, ingresa tu nombre 😊');
-    $('#nombre').focus();
-    return;
-  }
+    if (!nombre) {
+      showToast('Por favor, ingresa tu nombre 😊');
+      $('#nombre').focus();
+      return;
+    }
 
-  const mensaje =
-    `¡Hola Patitas de Lana! 🧶 Quiero cotizar un amigurumi personalizado:\n\n` +
-    `• Tipo: ${tipo}\n` +
-    `• Tamaño: ${tamano}\n` +
-    `• Colores: ${colores}\n` +
-    `• Detalles: ${detalles}\n\n` +
-    `Mi nombre es ${nombre}. ¡Gracias!`;
+    const mensaje =
+      `¡Hola Patitas de Lana! 🧶 Quiero cotizar un amigurumi personalizado:\n\n` +
+      `• Tipo: ${tipo}\n` +
+      `• Tamaño: ${tamano}\n` +
+      `• Colores: ${colores}\n` +
+      `• Detalles: ${detalles}\n\n` +
+      `Mi nombre es ${nombre}. ¡Gracias!`;
 
-  const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(mensaje)}`;
-  window.open(url, '_blank', 'noopener');
-});
+    const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(mensaje)}`;
+    window.open(url, '_blank', 'noopener');
+  });
+}
 
 /* ---------- Toast ---------- */
 let toastTimer;
 function showToast(message) {
   const toast = $('#toast');
+  if (!toast) return;
   toast.textContent = message;
   toast.classList.add('show');
   clearTimeout(toastTimer);
@@ -287,7 +302,8 @@ function showToast(message) {
 }
 
 /* ---------- Año dinámico ---------- */
-$('#year').textContent = new Date().getFullYear();
+const yearEl = $('#year');
+if (yearEl) yearEl.textContent = new Date().getFullYear();
 
 /* ---------- Init ---------- */
 renderProducts();
