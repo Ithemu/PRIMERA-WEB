@@ -71,6 +71,10 @@ h1, h2, h3, h4, .brand-text strong {
   padding: 0.9rem 0;
 }
 
+.header-inner .brand {
+  margin-right: auto;
+}
+
 .brand {
   display: flex;
   align-items: center;
@@ -128,7 +132,8 @@ h1, h2, h3, h4, .brand-text strong {
   cursor: pointer;
   display: grid;
   place-items: center;
-  margin-left: 0.4rem;
+  margin-right: 0.6rem;
+  flex-shrink: 0;
   transition: transform var(--transicion), background var(--transicion);
 }
 
