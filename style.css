@@ -490,6 +490,52 @@ h1, h2, h3, h4, .brand-text strong {
 .stat strong { font-family: 'Baloo 2', sans-serif; font-size: 1.6rem; color: var(--rosa-fuerte); }
 .stat span { color: var(--texto-suave); font-size: 0.85rem; }
 
+/* ===== CONTÁCTANOS ===== */
+.contact-section { background: linear-gradient(180deg, transparent, var(--crema)); }
+
+.contact-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1.5rem;
+  max-width: 1000px;
+  margin-inline: auto;
+}
+
+.contact-card {
+  background: var(--blanco);
+  border-radius: var(--radio);
+  padding: 1.6rem;
+  box-shadow: var(--sombra);
+  text-align: center;
+  transition: transform var(--transicion), box-shadow var(--transicion);
+}
+
+.contact-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--sombra-fuerte);
+}
+
+.contact-icon { font-size: 2rem; display: block; margin-bottom: 0.4rem; }
+.contact-card h3 { font-size: 1.1rem; margin-bottom: 0.8rem; }
+
+.contact-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  color: var(--texto-suave);
+  font-size: 0.92rem;
+}
+
+.contact-list a {
+  color: var(--texto-suave);
+  text-decoration: none;
+  font-weight: 700;
+  transition: color var(--transicion);
+}
+
+.contact-list a:hover { color: var(--rosa-fuerte); }
+
 /* ===== FOOTER ===== */
 .site-footer {
   background: var(--texto);
@@ -770,5 +816,6 @@ h1, h2, h3, h4, .brand-text strong {
   .mode-selector { grid-template-columns: 1fr; }
   .custom-options { grid-template-columns: 1fr; }
   .about-stats { grid-template-columns: 1fr; }
+  .contact-grid { grid-template-columns: 1fr; }
   .hero { padding: 2.5rem 0 2rem; }
 }
