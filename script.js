@@ -231,10 +231,10 @@ function selectMode(mode) {
     ? '🛍️ ¡Genial! Explora el catálogo en stock.'
     : '✨ ¡Perfecto! Cuéntanos tu idea personalizada.';
 
-  // Scroll suave a la sección correspondiente
+  // Navega a la "página" correspondiente dentro de la misma hoja
   const target = mode === 'stock' ? '#catalogo' : '#personalizados';
   setTimeout(() => {
-    document.querySelector(target)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    location.hash = target;
   }, 250);
 }
 
