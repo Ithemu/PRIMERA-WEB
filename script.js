@@ -189,12 +189,18 @@ function openPayment() {
   if (cart.length === 0) return;
   const amountEl = $('#paymentAmount');
   if (amountEl) amountEl.textContent = formatCLP(getTotal());
-  if (paymentModal) paymentModal.style.display = '';
+  if (paymentModal) {
+    paymentModal.removeAttribute('hidden');
+    paymentModal.style.display = '';
+  }
   if (overlay) overlay.style.display = '';
 }
 
 function closePayment() {
-  if (paymentModal) paymentModal.style.display = 'none';
+  if (paymentModal) {
+    paymentModal.style.display = 'none';
+    paymentModal.setAttribute('hidden', '');
+  }
   if (overlay && (!cartDrawer || !cartDrawer.classList.contains('open'))) {
     overlay.style.display = 'none';
   }
@@ -308,3 +314,5 @@ if (yearEl) yearEl.textContent = new Date().getFullYear();
 /* ---------- Init ---------- */
 renderProducts();
 renderCart();
+closePayment();
+closeCart();
