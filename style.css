@@ -65,10 +65,14 @@ h1, h2, h3, h4, .brand-text strong {
 
 .header-inner {
   display: flex;
+  flex-direction: row;
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
   padding: 0.9rem 0;
+}
+.header-inner > * {
+  width: auto;
 }
 
 .header-inner .brand {
@@ -93,7 +97,6 @@ h1, h2, h3, h4, .brand-text strong {
   display: flex;
   align-items: center;
   gap: 1.4rem;
-  margin-left: auto;
 }
 
 .main-nav a {
