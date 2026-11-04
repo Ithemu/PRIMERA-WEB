@@ -72,14 +72,15 @@ function renderGrid() {
 
   grid.innerHTML = state.products
     .map((p) => {
-      const selected = p.id === state.selectedId ? 'selected' : '';
+      const isSelected = String(p.id) === String(state.selectedId);
+      const selected = isSelected ? 'selected' : '';
       const thumb = p.image_url
         ? `<img src="${p.image_url}" alt="${p.name}" loading="lazy" />`
         : `<span class="catalog-emoji">${p.emoji || '🧸'}</span>`;
       const stock = Number(p.stock ?? 0);
       const stockLabel = stock > 0 ? `${stock} en stock` : 'Agotado';
       return `
-        <button class="catalog-tile ${selected}" type="button" data-id="${p.id}" role="option" aria-selected="${p.id === state.selectedId}">
+        <button class="catalog-tile ${selected}" type="button" data-id="${p.id}" role="option" aria-selected="${isSelected}">
           <div class="catalog-tile-img">${thumb}</div>
           <div class="catalog-tile-info">
             <strong>${p.name}</strong>
@@ -92,7 +93,7 @@ function renderGrid() {
 
   grid.querySelectorAll('.catalog-tile').forEach((tile) => {
     tile.addEventListener('click', () => {
-      state.selectedId = Number(tile.dataset.id);
+      state.selectedId = String(tile.dataset.id);
       renderGrid();
       renderDetail();
     });
@@ -103,7 +104,7 @@ function renderDetail() {
   const detail = $('#catalogDetail');
   if (!detail) return;
 
-  const product = state.products.find((p) => p.id === state.selectedId);
+  const product = state.products.find((p) => String(p.id) === String(state.selectedId));
   if (!product) {
     detail.innerHTML = `
       <div class="catalog-detail-empty">
@@ -158,7 +159,7 @@ export async function openCatalog() {
         window.registerProducts(state.products);
       }
       if (state.products.length && state.selectedId == null) {
-        state.selectedId = state.products[0].id;
+        state.selectedId = String(state.products[0].id);
       }
     } catch (err) {
       state.error = err.message || 'Error desconocido';
