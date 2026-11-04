@@ -154,6 +154,9 @@ export async function openCatalog() {
     renderGrid();
     try {
       state.products = await fetchProducts();
+      if (typeof window.registerProducts === 'function') {
+        window.registerProducts(state.products);
+      }
       if (state.products.length && state.selectedId == null) {
         state.selectedId = state.products[0].id;
       }
@@ -182,6 +185,9 @@ export function bindCatalogTriggers() {
     });
   });
 }
+
+window.openCatalog = openCatalog;
+window.closeCatalog = closeCatalog;
 
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', bindCatalogTriggers);

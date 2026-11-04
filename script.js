@@ -16,6 +16,32 @@ const PRODUCTS = [
   { id: 'p8', name: 'Unicornio Pastel', desc: 'Unicornio de 20 cm con melena arcoíris.', price: 18990, emoji: '🦄' }
 ];
 
+/* Productos dinámicos (Supabase) registrados desde js/catalog.js */
+const dynamicProducts = new Map();
+
+function registerProducts(list) {
+  if (!Array.isArray(list)) return;
+  list.forEach((p) => {
+    if (p && p.id != null) {
+      dynamicProducts.set(String(p.id), {
+        id: String(p.id),
+        name: p.name,
+        desc: p.desc || '',
+        price: Number(p.price) || 0,
+        emoji: p.emoji || '🧸',
+        image_url: p.image_url || null,
+      });
+    }
+  });
+}
+
+function findProduct(id) {
+  const key = String(id);
+  return dynamicProducts.get(key) || PRODUCTS.find((p) => String(p.id) === key);
+}
+
+window.registerProducts = registerProducts;
+
 /* ---------- Utilidades ---------- */
 const formatCLP = (value) =>
   'CLP $' + value.toLocaleString('es-CL', { maximumFractionDigits: 0 });
@@ -67,14 +93,22 @@ function renderProducts() {
 
 /* ---------- Carrito ---------- */
 function addToCart(id) {
-  const product = PRODUCTS.find((p) => p.id === id);
+  const product = findProduct(id);
   if (!product) return;
 
-  const existing = cart.find((item) => item.id === id);
+  const key = String(product.id);
+  const existing = cart.find((item) => String(item.id) === key);
   if (existing) {
     existing.qty += 1;
   } else {
-    cart.push({ id, name: product.name, price: product.price, emoji: product.emoji, qty: 1 });
+    cart.push({
+      id: key,
+      name: product.name,
+      price: product.price,
+      emoji: product.emoji,
+      image_url: product.image_url || null,
+      qty: 1,
+    });
   }
 
   saveCart();
@@ -82,14 +116,18 @@ function addToCart(id) {
   showToast(`✨ ${product.name} añadido al carrito`);
 }
 
+window.addToCart = addToCart;
+
 function removeFromCart(id) {
-  cart = cart.filter((item) => item.id !== id);
+  const key = String(id);
+  cart = cart.filter((item) => String(item.id) !== key);
   saveCart();
   renderCart();
 }
 
 function changeQty(id, delta) {
-  const item = cart.find((i) => i.id === id);
+  const key = String(id);
+  const item = cart.find((i) => String(i.id) === key);
   if (!item) return;
   item.qty += delta;
   if (item.qty <= 0) {
@@ -248,11 +286,21 @@ function selectMode(mode) {
       : '✨ ¡Perfecto! Cuéntanos tu idea personalizada.';
   }
 
-  // Navega a la página correspondiente
-  const target = mode === 'stock' ? 'catalogo.html' : 'personalizados.html';
-  setTimeout(() => {
-    window.location.href = target;
-  }, 250);
+  // "stock" abre el modal de catálogo (js/catalog.js); "custom" navega a personalizados
+  if (mode === 'stock') {
+    if (typeof window.openCatalog === 'function') {
+      window.openCatalog();
+    } else {
+      // Fallback: si el módulo aún no cargó, navega a la página del catálogo
+      setTimeout(() => {
+        window.location.href = 'catalogo.html';
+      }, 250);
+    }
+  } else if (mode === 'custom') {
+    setTimeout(() => {
+      window.location.href = 'personalizados.html';
+    }, 250);
+  }
 }
 
 modeCards.forEach((card) => {
