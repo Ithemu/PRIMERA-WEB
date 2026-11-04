@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="es-CL">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Administración · Patitas de Lana</title>
+  <meta name="description" content="Panel de administración de productos de Patitas de Lana." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;500;600;700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="css/catalog.css" />
+  <link rel="stylesheet" href="css/admin.css" />
+  <style>
+    .admin-page {
+      padding: 3rem 0 4rem;
+    }
+    .admin-page .container {
+      align-items: stretch;
+    }
+    .admin-page-head {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    .admin-page-head h1 {
+      font-size: clamp(1.8rem, 4vw, 2.6rem);
+      margin-bottom: 0.4rem;
+    }
+    .admin-page-head p {
+      color: var(--texto-suave);
+    }
+    .admin-layout {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 1.6rem;
+      align-items: start;
+    }
+    .admin-panel {
+      background: var(--blanco);
+      border-radius: var(--radio);
+      padding: 1.6rem;
+      box-shadow: var(--sombra);
+      border: 1px solid var(--lana-gris);
+    }
+    .admin-panel h2 {
+      font-size: 1.2rem;
+      margin-bottom: 1rem;
+    }
+    .admin-preview-wrap {
+      position: sticky;
+      top: 90px;
+    }
+    .admin-preview-card {
+      max-width: 320px;
+      margin: 0 auto;
+    }
+    .admin-preview-card .product-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .admin-preview-card .product-img {
+      overflow: hidden;
+    }
+    .admin-preview-stock {
+      display: inline-block;
+      font-size: 0.75rem;
+      font-weight: 800;
+      padding: 0.2rem 0.7rem;
+      border-radius: 999px;
+      background: #E8F5E9;
+      color: #2E7D32;
+      align-self: flex-start;
+    }
+    .admin-preview-stock.out {
+      background: #FFEBEE;
+      color: #B71C1C;
+    }
+    .admin-table-section {
+      margin-top: 2.4rem;
+    }
+    .admin-table-section h2 {
+      font-size: 1.3rem;
+      margin-bottom: 1rem;
+    }
+    .admin-form-msg {
+      grid-column: 1 / -1;
+      font-size: 0.85rem;
+      text-align: center;
+      padding: 0.5rem;
+      border-radius: 10px;
+    }
+    .admin-form-msg.ok {
+      background: #E8F5E9;
+      color: #2E7D32;
+    }
+    .admin-form-msg.err {
+      background: #FFEBEE;
+      color: #B71C1C;
+    }
+    @media (max-width: 900px) {
+      .admin-layout {
+        grid-template-columns: 1fr;
+      }
+      .admin-preview-wrap {
+        position: static;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="announcement-bar" aria-hidden="true">
+    <div class="announcement-content">
+      ✨ Panel de administración · Patitas de Lana 🧶
+    </div>
+  </div>
+
+  <!-- ===== HEADER ===== -->
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="index.html" class="brand" aria-label="Patitas de Lana, inicio">
+        <span class="brand-emoji" aria-hidden="true">🧶</span>
+        <span class="brand-text">
+          <strong>Patitas de Lana</strong>
+          <small>Amigurumis hechos a mano</small>
+        </span>
+      </a>
+
+      <nav class="main-nav" aria-label="Navegación principal">
+        <a href="index.html">Inicio</a>
+        <a href="catalogo.html">Catálogo</a>
+        <a href="nosotros.html">Nosotros</a>
+        <a href="contacto.html">Contacto</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ===== PANEL ADMIN ===== -->
+  <main class="admin-page">
+    <div class="container">
+      <header class="admin-page-head">
+        <h1>Panel de Administración</h1>
+        <p>Agrega, edita y elimina productos del catálogo en stock.</p>
+      </header>
+
+      <div class="admin-layout">
+        <!-- Formulario -->
+        <section class="admin-panel">
+          <h2 id="formTitle">Nuevo producto</h2>
+          <form class="admin-form" id="productForm" novalidate>
+            <label>ID (opcional al crear)
+              <input name="id" type="text" placeholder="Se genera automáticamente" autocomplete="off" />
+            </label>
+            <label>Nombre
+              <input name="name" type="text" required placeholder="Ej: Osito Miel" />
+            </label>
+            <label>Descripción
+              <textarea name="desc" rows="2" placeholder="Osito tejido de 15 cm en tonos crema."></textarea>
+            </label>
+            <label>Precio (CLP)
+              <input name="price" type="number" min="0" step="1" required placeholder="12990" />
+            </label>
+            <label>Stock inicial
+              <input name="stock" type="number" min="0" step="1" value="0" />
+            </label>
+            <label>Emoji (si no hay imagen)
+              <input name="emoji" type="text" maxlength="4" placeholder="🧸" />
+            </label>
+            <label>URL de la imagen (Supabase Storage)
+              <input name="image_url" type="url" placeholder="https://..." />
+            </label>
+
+            <div class="admin-form-actions">
+              <button type="submit" class="admin-btn primary" id="saveBtn">Guardar producto</button>
+              <button type="button" class="admin-btn ghost" id="cancelBtn" hidden>Cancelar edición</button>
+            </div>
+            <p class="admin-form-msg" id="formMsg" hidden></p>
+          </form>
+        </section>
+
+        <!-- Vista previa -->
+        <aside class="admin-panel admin-preview-wrap">
+          <h2>Vista Previa en Vivo</h2>
+          <article class="product-card admin-preview-card" id="previewCard">
+            <div class="product-img" id="previewImg" aria-hidden="true">🧸</div>
+            <div class="product-body">
+              <h3 class="product-name" id="previewName">Nombre del producto</h3>
+              <p class="product-desc" id="previewDesc">Descripción del producto.</p>
+              <span class="product-price" id="previewPrice">CLP $0</span>
+              <span class="admin-preview-stock" id="previewStock">0 en stock</span>
+            </div>
+          </article>
+        </aside>
+      </div>
+
+      <!-- Tabla -->
+      <section class="admin-table-section">
+        <h2>Productos registrados</h2>
+        <div class="admin-table-wrap">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Precio</th>
+                <th>Stock</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="productsTableBody">
+              <tr><td colspan="5" class="admin-empty">Cargando productos…</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <!-- ===== TOAST ===== -->
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script type="module" src="admin.js"></script>
+</body>
+</html>
