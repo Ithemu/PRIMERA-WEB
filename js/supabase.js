@@ -7,6 +7,22 @@ export const supabase = createClient(supabaseUrl, supabaseKey);
 
 const TABLE = 'productos';
 
+function normalizePayload(payload = {}) {
+  const out = {
+    name: (payload.name ?? '').toString().trim(),
+    desc_text: (payload.desc_text ?? payload.desc ?? '').toString().trim(),
+    price: Number(payload.price) || 0,
+    stock: Number(payload.stock) || 0,
+    emoji: (payload.emoji ?? '🧸').toString().trim() || '🧸',
+    image_url: payload.image_url ? payload.image_url.toString().trim() : null,
+  };
+  if (payload.category != null) out.category = payload.category.toString().trim();
+  if (payload.id != null && String(payload.id).trim() !== '') {
+    out.id = payload.id;
+  }
+  return out;
+}
+
 export async function fetchProducts() {
   const { data, error } = await supabase
     .from(TABLE)
@@ -19,7 +35,7 @@ export async function fetchProducts() {
 export async function createProduct(payload) {
   const { data, error } = await supabase
     .from(TABLE)
-    .insert(payload)
+    .insert(normalizePayload(payload))
     .select()
     .single();
   if (error) throw error;
@@ -27,9 +43,11 @@ export async function createProduct(payload) {
 }
 
 export async function updateProduct(id, payload) {
+  const clean = normalizePayload(payload);
+  delete clean.id;
   const { data, error } = await supabase
     .from(TABLE)
-    .update(payload)
+    .update(clean)
     .eq('id', id)
     .select()
     .single();

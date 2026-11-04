@@ -204,6 +204,7 @@ async function init() {
       emoji: form.emoji.value.trim() || '🧸',
       image_url: form.image_url.value.trim() || null,
     };
+    // El payload se normaliza en js/supabase.js antes de enviarse a Supabase.
 
     try {
       if (state.editingId != null) {
@@ -214,7 +215,7 @@ async function init() {
         const manualId = form.id.value.trim();
         if (manualId) payload.id = manualId;
         await createProduct(payload);
-        showFormMsg('✅ Producto creado.', 'ok');
+        showFormMsg('✅ Producto creado y guardado en Supabase.', 'ok');
         showToast('✅ Producto creado');
       }
       await loadProducts();

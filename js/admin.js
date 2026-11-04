@@ -209,7 +209,7 @@ function openForm(product) {
     const form = e.currentTarget;
     const payload = {
       name: form.name.value.trim(),
-      desc: form.desc.value.trim(),
+      desc_text: form.desc.value.trim(),
       price: Number(form.price.value),
       stock: Number(form.stock.value),
       category: form.category.value.trim(),
@@ -228,6 +228,7 @@ function openForm(product) {
       renderTable();
       wrap.hidden = true;
       wrap.innerHTML = '';
+      alert('✅ Producto guardado en Supabase');
     } catch (err) {
       errEl.textContent = err.message || 'Error al guardar';
       errEl.hidden = false;
