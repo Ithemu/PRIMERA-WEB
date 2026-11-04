@@ -5,7 +5,7 @@ const supabaseKey = 'sb_publishable_DrVZWQpgCbF4pZfWh0UdMQ_cLRvIAut';
 
 export const supabase = createClient(supabaseUrl, supabaseKey);
 
-const TABLE = 'products';
+const TABLE = 'productos';
 
 export async function fetchProducts() {
   const { data, error } = await supabase
