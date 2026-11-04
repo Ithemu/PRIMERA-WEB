@@ -5,16 +5,7 @@
 const WHATSAPP_NUMBER = '56912345678'; // Cambia por el número real de la tienda
 
 /* ---------- Datos de productos ---------- */
-let PRODUCTS = [
-  { id: 'p1', name: 'Osito Miel', desc: 'Osito tejido de 15 cm en tonos crema.', price: 12990, emoji: '🧸' },
-  { id: 'p2', name: 'Conejita Rosa', desc: 'Conejita con orejas largas y moño pastel.', price: 14990, emoji: '🐰' },
-  { id: 'p3', name: 'Gatito Nube', desc: 'Gatito blanco de 12 cm, súper suave.', price: 11990, emoji: '🐱' },
-  { id: 'p4', name: 'Panda Bambú', desc: 'Panda de 18 cm con hilo de algodón.', price: 16990, emoji: '🐼' },
-  { id: 'p5', name: 'Zorrito Otoño', desc: 'Zorrito naranja de 15 cm, edición limitada.', price: 13990, emoji: '🦊' },
-  { id: 'p6', name: 'Llavero Nubecita', desc: 'Mini llavero de 8 cm, ideal para regalo.', price: 5990, emoji: '☁️' },
-  { id: 'p7', name: 'Sapo Saltarín', desc: 'Sapito verde de 10 cm con ojitos grandes.', price: 9990, emoji: '🐸' },
-  { id: 'p8', name: 'Unicornio Pastel', desc: 'Unicornio de 20 cm con melena arcoíris.', price: 18990, emoji: '🦄' }
-];
+let PRODUCTS = [];
 
 /* Productos dinámicos (Supabase) registrados desde js/catalog.js */
 const dynamicProducts = new Map();
