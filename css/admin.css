@@ -197,6 +197,30 @@
 
 body.admin-open { overflow: hidden; }
 
+.admin-access {
+  position: fixed;
+  bottom: 12px;
+  right: 12px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--rosa-claro);
+  color: var(--texto-suave);
+  display: grid;
+  place-items: center;
+  text-decoration: none;
+  font-size: 1rem;
+  opacity: 0.35;
+  transition: opacity var(--transicion), background var(--transicion), transform var(--transicion);
+  z-index: 80;
+}
+
+.admin-access:hover {
+  opacity: 1;
+  background: var(--rosa-medio);
+  transform: rotate(45deg);
+}
+
 @media (max-width: 640px) {
   .admin-form { grid-template-columns: 1fr; }
 }
