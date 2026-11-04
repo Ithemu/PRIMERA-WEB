@@ -34,8 +34,11 @@ function findProduct(id) {
 window.registerProducts = registerProducts;
 
 /* ---------- Utilidades ---------- */
-const formatCLP = (value) =>
-  'CLP $' + value.toLocaleString('es-CL', { maximumFractionDigits: 0 });
+const formatCLP = (value) => {
+  const n = Number(value);
+  const safe = Number.isFinite(n) ? n : 0;
+  return 'CLP $' + safe.toLocaleString('es-CL', { maximumFractionDigits: 0 });
+};
 
 const $ = (sel, ctx = document) => ctx.querySelector(sel);
 const $$ = (sel, ctx = document) => Array.from(ctx.querySelectorAll(sel));
