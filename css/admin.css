@@ -1,0 +1,202 @@
+.admin-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 310;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+}
+
+.admin-modal[hidden] { display: none; }
+
+.admin-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(74, 63, 68, 0.6);
+  backdrop-filter: blur(6px);
+}
+
+.admin-shell {
+  position: relative;
+  width: min(1000px, 100%);
+  max-height: 90vh;
+  background: var(--blanco);
+  border-radius: var(--radio);
+  box-shadow: var(--sombra-fuerte);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid var(--lana-gris);
+}
+
+.admin-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.2rem 1.6rem;
+  border-bottom: 1px solid var(--rosa-claro);
+  background: linear-gradient(90deg, var(--rosa-claro), var(--crema));
+}
+
+.admin-header h2 { font-size: 1.3rem; }
+
+.admin-close {
+  border: none;
+  background: var(--blanco);
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background var(--transicion), transform var(--transicion);
+}
+
+.admin-close:hover { background: var(--rosa-medio); transform: rotate(90deg); }
+
+.admin-body {
+  padding: 1.4rem 1.6rem;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.admin-login {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+  max-width: 380px;
+  margin: 1rem auto;
+  width: 100%;
+}
+
+.admin-login label,
+.admin-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: var(--texto-suave);
+}
+
+.admin-login input,
+.admin-form input,
+.admin-form textarea {
+  font-family: inherit;
+  font-size: 0.95rem;
+  padding: 0.65rem 0.85rem;
+  border: 2px solid var(--rosa-claro);
+  border-radius: 12px;
+  background: var(--blanco);
+  color: var(--texto);
+  transition: border-color var(--transicion);
+}
+
+.admin-login input:focus,
+.admin-form input:focus,
+.admin-form textarea:focus {
+  outline: none;
+  border-color: var(--rosa-fuerte);
+}
+
+.admin-hint { color: var(--texto-suave); font-size: 0.9rem; text-align: center; }
+
+.admin-btn {
+  border: none;
+  font-family: inherit;
+  font-weight: 800;
+  padding: 0.7rem 1.1rem;
+  border-radius: var(--radio-boton);
+  cursor: pointer;
+  transition: transform var(--transicion), background var(--transicion);
+}
+
+.admin-btn.primary { background: var(--rosa-fuerte); color: var(--blanco); }
+.admin-btn.primary:hover { transform: scale(1.02); }
+.admin-btn.ghost { background: var(--rosa-claro); color: var(--texto); }
+.admin-btn.ghost:hover { background: var(--rosa-medio); }
+.admin-btn.small { padding: 0.4rem 0.8rem; font-size: 0.8rem; }
+.admin-btn.danger { background: #FFEBEE; color: #B71C1C; }
+.admin-btn.danger:hover { background: #FFCDD2; }
+
+.admin-toolbar {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.admin-table-wrap {
+  overflow-x: auto;
+  border-radius: 14px;
+  border: 1px solid var(--lana-gris);
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.admin-table th,
+.admin-table td {
+  padding: 0.7rem 0.9rem;
+  text-align: left;
+  border-bottom: 1px solid var(--lana-gris);
+}
+
+.admin-table th {
+  background: var(--crema);
+  font-weight: 800;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--texto-suave);
+}
+
+.admin-table tr:last-child td { border-bottom: none; }
+
+.admin-actions { display: flex; gap: 0.4rem; }
+
+.admin-empty { text-align: center; color: var(--texto-suave); padding: 1.5rem; }
+
+.admin-form-wrap {
+  background: var(--crema);
+  border-radius: 16px;
+  padding: 1.2rem;
+  border: 1px solid var(--lana-gris);
+}
+
+.admin-form {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.7rem;
+}
+
+.admin-form h3 { grid-column: 1 / -1; }
+
+.admin-form label:nth-child(2),
+.admin-form label:nth-child(7) {
+  grid-column: 1 / -1;
+}
+
+.admin-form-actions {
+  grid-column: 1 / -1;
+  display: flex;
+  gap: 0.6rem;
+  justify-content: flex-end;
+}
+
+.admin-error {
+  grid-column: 1 / -1;
+  color: #B71C1C;
+  font-size: 0.85rem;
+  text-align: center;
+}
+
+body.admin-open { overflow: hidden; }
+
+@media (max-width: 640px) {
+  .admin-form { grid-template-columns: 1fr; }
+}
