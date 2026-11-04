@@ -4,16 +4,18 @@
    ========================================================= */
 
 :root {
-  --rosa-claro: #e4dede;
-  --rosa-medio: #FFB6C1;
-  --rosa-fuerte: #FF69B4;
+  --rosa-claro: #FBE4E8;
+  --rosa-medio: #F7C6D0;
+  --rosa-fuerte: #E89AAE;
   --blanco: #FFFFFF;
-  --crema: #FFFDD0;
-  --texto: #3A2E33;
-  --texto-suave: #6B5B62;
-  --sombra: 0 10px 30px rgba(255, 105, 180, 0.15);
-  --sombra-fuerte: 0 18px 45px rgba(255, 105, 180, 0.28);
-  --radio: 22px;
+  --crema: #FFF6E9;
+  --lana-gris: #E8E2DC;
+  --texto: #4A3F44;
+  --texto-suave: #8A7B82;
+  --sombra: 0 10px 30px rgba(232, 154, 174, 0.15);
+  --sombra-fuerte: 0 18px 45px rgba(232, 154, 174, 0.28);
+  --radio: 28px;
+  --radio-boton: 999px;
   --transicion: 0.3s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
@@ -27,6 +29,7 @@ body {
   background:
     radial-gradient(circle at 10% 0%, var(--rosa-claro) 0%, transparent 45%),
     radial-gradient(circle at 90% 10%, var(--crema) 0%, transparent 40%),
+    radial-gradient(circle at 50% 100%, var(--lana-gris) 0%, transparent 55%),
     var(--blanco);
   line-height: 1.6;
   min-height: 100vh;
@@ -362,6 +365,7 @@ h1, h2, h3, h4, .brand-text strong {
   display: flex;
   flex-direction: column;
   transition: transform var(--transicion), box-shadow var(--transicion);
+  border: 1px solid var(--lana-gris);
 }
 
 .product-card:hover {
@@ -389,7 +393,7 @@ h1, h2, h3, h4, .brand-text strong {
   font-weight: 800;
   font-family: inherit;
   padding: 0.7rem 1rem;
-  border-radius: 999px;
+  border-radius: var(--radio-boton);
   cursor: pointer;
   transition: background var(--transicion), transform var(--transicion);
 }
@@ -416,6 +420,7 @@ h1, h2, h3, h4, .brand-text strong {
   padding: 1.4rem;
   box-shadow: var(--sombra);
   transition: transform var(--transicion);
+  border: 1px solid var(--lana-gris);
 }
 
 .option-card:hover { transform: translateY(-4px); }
@@ -471,7 +476,7 @@ h1, h2, h3, h4, .brand-text strong {
   font-weight: 800;
   font-size: 1rem;
   padding: 0.9rem 1.2rem;
-  border-radius: 999px;
+  border-radius: var(--radio-boton);
   cursor: pointer;
   transition: transform var(--transicion), box-shadow var(--transicion);
   box-shadow: 0 8px 20px rgba(37, 211, 102, 0.35);
@@ -514,6 +519,7 @@ h1, h2, h3, h4, .brand-text strong {
   flex-direction: column;
   align-items: center;
   text-align: center;
+  border: 1px solid var(--lana-gris);
 }
 
 .stat strong { font-family: 'Baloo 2', sans-serif; font-size: 1.6rem; color: var(--rosa-fuerte); }
@@ -537,6 +543,7 @@ h1, h2, h3, h4, .brand-text strong {
   box-shadow: var(--sombra);
   text-align: center;
   transition: transform var(--transicion), box-shadow var(--transicion);
+  border: 1px solid var(--lana-gris);
 }
 
 .contact-card:hover {
@@ -721,7 +728,7 @@ h1, h2, h3, h4, .brand-text strong {
   font-family: inherit;
   font-weight: 800;
   padding: 0.9rem;
-  border-radius: 999px;
+  border-radius: var(--radio-boton);
   cursor: pointer;
   transition: transform var(--transicion), box-shadow var(--transicion);
 }
@@ -806,7 +813,7 @@ h1, h2, h3, h4, .brand-text strong {
   font-family: inherit;
   font-weight: 800;
   padding: 0.9rem;
-  border-radius: 999px;
+  border-radius: var(--radio-boton);
   cursor: pointer;
   transition: transform var(--transicion);
 }
