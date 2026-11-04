@@ -1,4 +1,7 @@
 {
   "liveServer.settings.entryFile": "index.html",
-  "liveServer.settings.root": "/"
+  "liveServer.settings.root": "/",
+  "liveServer.settings.file": "index.html",
+  "liveServer.settings.NoBrowser": false,
+  "liveServer.settings.port": 5500
 }
