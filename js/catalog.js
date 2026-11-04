@@ -121,10 +121,11 @@ function renderDetail() {
     ? `<img src="${product.image_url}" alt="${product.name}" />`
     : `<span class="catalog-detail-emoji">${product.emoji || '🧸'}</span>`;
 
+  const desc = product.desc_text || product.desc || '';
   detail.innerHTML = `
     <div class="catalog-detail-img">${img}</div>
     <h3>${product.name}</h3>
-    <p class="catalog-detail-desc">${product.desc || ''}</p>
+    <p class="catalog-detail-desc">${desc}</p>
     <div class="catalog-detail-meta">
       <span class="catalog-price">${formatCLP(product.price)}</span>
       <span class="catalog-stock ${stock > 0 ? '' : 'out'}">${stock > 0 ? `${stock} disponibles` : 'Agotado'}</span>
