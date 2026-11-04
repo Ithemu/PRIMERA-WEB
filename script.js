@@ -5,7 +5,7 @@
 const WHATSAPP_NUMBER = '56912345678'; // Cambia por el número real de la tienda
 
 /* ---------- Datos de productos ---------- */
-const PRODUCTS = [
+let PRODUCTS = [
   { id: 'p1', name: 'Osito Miel', desc: 'Osito tejido de 15 cm en tonos crema.', price: 12990, emoji: '🧸' },
   { id: 'p2', name: 'Conejita Rosa', desc: 'Conejita con orejas largas y moño pastel.', price: 14990, emoji: '🐰' },
   { id: 'p3', name: 'Gatito Nube', desc: 'Gatito blanco de 12 cm, súper suave.', price: 11990, emoji: '🐱' },
@@ -65,6 +65,30 @@ function loadCart() {
 
 function saveCart() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(cart));
+}
+
+/* ---------- Carga de productos desde Supabase ---------- */
+async function fetchProducts() {
+  try {
+    const { fetchProducts: fetchFromSupabase } = await import('./js/supabase.js');
+    const data = await fetchFromSupabase();
+    if (!Array.isArray(data)) return;
+
+    PRODUCTS = data.map((p) => ({
+      id: p.id,
+      name: p.name,
+      desc: p.desc_text || p.desc || '',
+      price: Number(p.price) || 0,
+      emoji: p.emoji || '🧸',
+      image_url: p.image_url || null,
+      stock: p.stock ?? 0,
+    }));
+
+    registerProducts(PRODUCTS);
+    renderProducts();
+  } catch (err) {
+    console.error('Error al cargar productos de Supabase:', err.message);
+  }
 }
 
 /* ---------- Render de productos ---------- */
@@ -364,6 +388,11 @@ renderProducts();
 renderCart();
 closePayment();
 closeCart();
+
+/* Si estamos en catalogo.html, carga productos reales desde Supabase */
+if ($('#productGrid')) {
+  fetchProducts();
+}
 
 /* Asegura que la página siempre inicie en "Inicio" */
 if (window.location.hash) {
