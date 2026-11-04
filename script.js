@@ -1,5 +1,5 @@
 /* =========================================================
-   Patitas de Lana · Lógica interactiva
+   Patitas de Lana · Lógica interactiva con Supabase
    ========================================================= */
 
 const WHATSAPP_NUMBER = '56912345678'; // Cambia por el número real de la tienda
