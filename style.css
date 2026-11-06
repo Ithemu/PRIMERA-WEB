@@ -45,8 +45,10 @@ h1, h2, h3, h4, .brand-text strong {
 }
 
 .container {
-  width: min(1180px, 92%);
+  width: 100%;
+  max-width: 1200px;
   margin-inline: auto;
+  padding-inline: 1rem;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -54,6 +56,16 @@ h1, h2, h3, h4, .brand-text strong {
 
 .container > * {
   width: 100%;
+}
+
+/* Imágenes responsivas globales */
+img,
+picture,
+video,
+svg {
+  max-width: 100%;
+  height: auto;
+  display: block;
 }
 
 /* ===== MARQUESINA ===== */
@@ -126,7 +138,7 @@ h1, h2, h3, h4, .brand-text strong {
 .brand-text small { color: var(--texto-suave); font-size: 0.75rem; }
 
 .main-nav {
-  display: flex;
+  display: none;
   align-items: center;
   gap: 1.4rem;
 }
@@ -137,6 +149,70 @@ h1, h2, h3, h4, .brand-text strong {
   font-weight: 700;
   font-size: 0.92rem;
   transition: color var(--transicion);
+}
+
+/* Botón hamburguesa (visible solo en móvil) */
+.nav-toggle {
+  display: inline-flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  width: 44px;
+  height: 44px;
+  padding: 0 10px;
+  border: none;
+  background: var(--rosa-claro);
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background var(--transicion), transform var(--transicion);
+}
+
+.nav-toggle:hover { background: var(--rosa-medio); }
+
+.nav-toggle span {
+  display: block;
+  height: 2px;
+  width: 100%;
+  background: var(--texto);
+  border-radius: 2px;
+  transition: transform var(--transicion), opacity var(--transicion);
+}
+
+.nav-toggle[aria-expanded="true"] span:nth-child(1) {
+  transform: translateY(7px) rotate(45deg);
+}
+.nav-toggle[aria-expanded="true"] span:nth-child(2) {
+  opacity: 0;
+}
+.nav-toggle[aria-expanded="true"] span:nth-child(3) {
+  transform: translateY(-7px) rotate(-45deg);
+}
+
+/* Menú móvil desplegable */
+.mobile-nav {
+  display: none;
+  flex-direction: column;
+  gap: 0.4rem;
+  padding: 0.8rem 1rem 1.2rem;
+  background: var(--blanco);
+  border-bottom: 1px solid var(--rosa-claro);
+}
+
+.mobile-nav.open { display: flex; }
+
+.mobile-nav a {
+  text-decoration: none;
+  color: var(--texto);
+  font-weight: 700;
+  padding: 0.7rem 0.6rem;
+  border-radius: 12px;
+  transition: background var(--transicion), color var(--transicion);
+}
+
+.mobile-nav a:hover,
+.mobile-nav a.active {
+  background: var(--rosa-claro);
+  color: var(--rosa-fuerte);
 }
 
 .main-nav a:hover { color: var(--rosa-fuerte); }
@@ -353,7 +429,7 @@ h1, h2, h3, h4, .brand-text strong {
 /* ===== PRODUCTOS ===== */
 .product-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  grid-template-columns: 1fr;
   gap: 1.5rem;
 }
 
@@ -840,18 +916,45 @@ h1, h2, h3, h4, .brand-text strong {
 
 .toast.show { transform: translateX(-50%) translateY(0); }
 
-/* ===== RESPONSIVE ===== */
-@media (max-width: 900px) {
-  .main-nav a { display: none; }
-  .main-nav { display: flex; }
-  .custom-layout, .about-layout { grid-template-columns: 1fr; }
-  .footer-grid { grid-template-columns: 1fr; }
+/* ===== RESPONSIVE (Mobile First) ===== */
+
+/* Móvil por defecto: 1 columna en grids principales */
+.mode-selector,
+.custom-layout,
+.custom-options,
+.about-layout,
+.about-stats,
+.contact-grid,
+.footer-grid {
+  grid-template-columns: 1fr;
 }
 
-@media (max-width: 640px) {
-  .mode-selector { grid-template-columns: 1fr; }
-  .custom-options { grid-template-columns: 1fr; }
-  .about-stats { grid-template-columns: 1fr; }
-  .contact-grid { grid-template-columns: 1fr; }
-  .hero { padding: 2.5rem 0 2rem; }
+/* Tablet: ≥ 640px */
+@media (min-width: 640px) {
+  .product-grid { grid-template-columns: repeat(2, 1fr); }
+  .mode-selector { grid-template-columns: repeat(2, 1fr); }
+  .custom-options { grid-template-columns: repeat(2, 1fr); }
+  .about-stats { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .contact-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .footer-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* Escritorio: ≥ 768px (menú horizontal, sin hamburguesa) */
+@media (min-width: 768px) {
+  .main-nav { display: flex; }
+  .nav-toggle { display: none; }
+  .mobile-nav { display: none !important; }
+  .custom-layout { grid-template-columns: 1fr 1fr; }
+  .about-layout { grid-template-columns: 1fr; }
+  .contact-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+
+/* Escritorio grande: ≥ 1024px */
+@media (min-width: 1024px) {
+  .product-grid { grid-template-columns: repeat(3, 1fr); }
+}
+
+/* Pantallas muy grandes: ≥ 1280px */
+@media (min-width: 1280px) {
+  .product-grid { grid-template-columns: repeat(4, 1fr); }
 }
