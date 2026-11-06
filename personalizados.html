@@ -103,6 +103,19 @@
           <label for="detalles">Detalles adicionales</label>
           <textarea id="detalles" name="detalles" rows="3" placeholder="Cuéntanos más sobre tu idea..."></textarea>
 
+          <label for="idea">Describe tu idea con más detalle</label>
+          <textarea id="idea" name="idea" rows="5" placeholder="Ej: Quiero un amigurumi de mi perrita Luna, raza poodle, color crema, con un lazo rosa..."></textarea>
+
+          <label for="imagenes">Sube imágenes de referencia (opcional)</label>
+          <div class="upload-area" id="uploadArea">
+            <input type="file" id="imagenes" name="imagenes" accept="image/*" multiple hidden />
+            <button type="button" class="upload-btn" id="uploadBtn">
+              <span aria-hidden="true">📷</span> Seleccionar imágenes
+            </button>
+            <p class="upload-hint">Puedes subir varias imágenes (JPG, PNG, WEBP).</p>
+            <div class="upload-preview" id="uploadPreview"></div>
+          </div>
+
           <button type="submit" class="btn-whatsapp">
             <span aria-hidden="true">💬</span> Cotizar y Pedir por WhatsApp
           </button>

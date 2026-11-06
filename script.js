@@ -331,6 +331,72 @@ modeCards.forEach((card) => {
   });
 });
 
+/* ---------- Carga de imágenes de referencia ---------- */
+const uploadInput = $('#imagenes');
+const uploadBtn = $('#uploadBtn');
+const uploadArea = $('#uploadArea');
+const uploadPreview = $('#uploadPreview');
+
+let uploadedFiles = [];
+
+function renderUploadPreview() {
+  if (!uploadPreview) return;
+  uploadPreview.innerHTML = uploadedFiles.map((file, idx) => `
+    <div class="upload-thumb">
+      <img src="${file.url}" alt="${file.name}" />
+      <button type="button" data-remove="${idx}" aria-label="Quitar imagen">✕</button>
+    </div>
+  `).join('');
+}
+
+function addFiles(fileList) {
+  const files = Array.from(fileList || []).filter((f) => f.type.startsWith('image/'));
+  files.forEach((file) => {
+    uploadedFiles.push({
+      name: file.name,
+      url: URL.createObjectURL(file),
+    });
+  });
+  renderUploadPreview();
+}
+
+if (uploadBtn && uploadInput) {
+  uploadBtn.addEventListener('click', () => uploadInput.click());
+  uploadInput.addEventListener('change', (e) => {
+    addFiles(e.target.files);
+    uploadInput.value = '';
+  });
+}
+
+if (uploadArea) {
+  ['dragenter', 'dragover'].forEach((evt) => {
+    uploadArea.addEventListener(evt, (e) => {
+      e.preventDefault();
+      uploadArea.classList.add('dragover');
+    });
+  });
+  ['dragleave', 'drop'].forEach((evt) => {
+    uploadArea.addEventListener(evt, (e) => {
+      e.preventDefault();
+      uploadArea.classList.remove('dragover');
+    });
+  });
+  uploadArea.addEventListener('drop', (e) => {
+    if (e.dataTransfer?.files) addFiles(e.dataTransfer.files);
+  });
+}
+
+if (uploadPreview) {
+  uploadPreview.addEventListener('click', (e) => {
+    const btn = e.target.closest('[data-remove]');
+    if (!btn) return;
+    const idx = Number(btn.dataset.remove);
+    const removed = uploadedFiles.splice(idx, 1)[0];
+    if (removed?.url) URL.revokeObjectURL(removed.url);
+    renderUploadPreview();
+  });
+}
+
 /* ---------- Formulario personalizado → WhatsApp ---------- */
 const customForm = $('#customForm');
 if (customForm) {
@@ -342,6 +408,8 @@ if (customForm) {
     const colores = $('#colores').value.trim() || 'A definir';
     const nombre = $('#nombre').value.trim();
     const detalles = $('#detalles').value.trim() || 'Sin detalles adicionales';
+    const ideaEl = $('#idea');
+    const idea = ideaEl ? ideaEl.value.trim() : '';
 
     if (!nombre) {
       showToast('Por favor, ingresa tu nombre 😊');
@@ -349,12 +417,21 @@ if (customForm) {
       return;
     }
 
-    const mensaje =
+    const imagenesTxt = uploadedFiles.length
+      ? uploadedFiles.map((f) => `  - ${f.name}`).join('\n')
+      : '  (sin imágenes adjuntas)';
+
+    let mensaje =
       `¡Hola Patitas de Lana! 🧶 Quiero cotizar un amigurumi personalizado:\n\n` +
       `• Tipo: ${tipo}\n` +
       `• Tamaño: ${tamano}\n` +
       `• Colores: ${colores}\n` +
-      `• Detalles: ${detalles}\n\n` +
+      `• Detalles: ${detalles}\n`;
+
+    if (idea) mensaje += `• Idea: ${idea}\n`;
+
+    mensaje +=
+      `• Imágenes de referencia:\n${imagenesTxt}\n\n` +
       `Mi nombre es ${nombre}. ¡Gracias!`;
 
     const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(mensaje)}`;
