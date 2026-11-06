@@ -329,16 +329,14 @@ svg {
   box-shadow: var(--sombra);
   font-family: inherit;
   color: inherit;
-  text-decoration: none;
 }
 
 .mode-card:hover,
 .mode-card:focus-visible {
-  transform: translateY(-6px) scale(1.02);
+  transform: translateY(-6px);
   border-color: var(--rosa-medio);
   box-shadow: var(--sombra-fuerte);
   outline: none;
-  cursor: pointer;
 }
 
 .mode-glow {
