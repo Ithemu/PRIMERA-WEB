@@ -141,6 +141,8 @@ svg {
   display: none;
   align-items: center;
   gap: 1.4rem;
+  flex-wrap: nowrap;
+  white-space: nowrap;
 }
 
 .main-nav a {
@@ -1020,11 +1022,15 @@ svg {
   .footer-grid { grid-template-columns: repeat(2, 1fr); }
 }
 
-/* Escritorio: ≥ 768px (menú horizontal, sin hamburguesa) */
-@media (min-width: 768px) {
+/* Tablet: ≥ 640px (menú horizontal visible, sin hamburguesa) */
+@media (min-width: 640px) {
   .main-nav { display: flex; }
   .nav-toggle { display: none; }
   .mobile-nav { display: none !important; }
+}
+
+/* Escritorio: ≥ 768px */
+@media (min-width: 768px) {
   .custom-layout { grid-template-columns: 1fr 1fr; }
   .about-layout { grid-template-columns: 1fr; }
   .contact-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
