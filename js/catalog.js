@@ -163,7 +163,10 @@ export async function openCatalog() {
         state.selectedId = String(state.products[0].id);
       }
     } catch (err) {
-      state.error = err.message || 'Error desconocido';
+      const msg = err?.message || 'Error desconocido';
+      state.error = /failed to fetch/i.test(msg)
+        ? 'No se pudo conectar con el servidor. Verifica tu conexión o que el sitio se esté sirviendo por HTTP (no file://).'
+        : msg;
     } finally {
       state.loading = false;
     }
