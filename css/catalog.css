@@ -45,12 +45,15 @@
 /* ---------- Grid de productos ---------- */
 .catalog-section {
   padding: 3rem 0 4rem;
+  display: block;
 }
 
 .catalog-product-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 1.5rem;
+  width: 100%;
+  min-height: 1px;
 }
 
 /* ---------- Product Card ---------- */
