@@ -452,9 +452,7 @@ renderCart();
 closePayment();
 closeCart();
 
-/* Precarga productos desde Supabase para que el carrito pueda resolverlos.
-   El render visual del catálogo lo hace js/catalog.js. */
-if ($('#catalogGrid')) {
-  fetchProducts();
-}
+/* El catálogo en stock (js/catalog.js) ya carga los productos desde Supabase
+   y los registra vía window.registerProducts para que el carrito los resuelva.
+   No duplicamos la carga aquí para evitar condiciones de carrera. */
 

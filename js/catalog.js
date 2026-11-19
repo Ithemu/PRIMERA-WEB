@@ -50,38 +50,44 @@ function renderGrid() {
     return;
   }
 
-  grid.innerHTML = state.products
-    .map((p) => {
-      const stock = Number(p.stock ?? 0);
-      const disabled = stock <= 0 ? 'disabled' : '';
-      const media = p.image_url
-        ? `<img src="${escapeHtml(p.image_url)}" alt="${escapeHtml(p.name)}" loading="lazy" />`
-        : `<span class="catalog-card-emoji">${escapeHtml(p.emoji || '🧸')}</span>`;
-      const desc = p.desc_text || p.desc || '';
-      const ctaLabel = stock > 0 ? 'Añadir al Carrito' : 'Sin stock';
-      return `
-        <article class="catalog-card">
-          <div class="catalog-card-media">${media}</div>
-          <div class="catalog-card-body">
-            <h3 class="catalog-card-title">${escapeHtml(p.name)}</h3>
-            <p class="catalog-card-desc">${escapeHtml(desc)}</p>
-            <span class="catalog-card-price">${formatCLP(p.price)}</span>
-            <button class="catalog-card-cta" type="button" ${disabled} data-add="${escapeHtml(p.id)}">
-              ${ctaLabel}
-            </button>
-          </div>
-        </article>
-      `;
-    })
-    .join('');
+  try {
+    grid.innerHTML = state.products
+      .map((p) => {
+        const stock = Number(p.stock ?? 0);
+        const disabled = stock <= 0 ? 'disabled' : '';
+        const imageUrl = p.image_url ? String(p.image_url).trim() : '';
+        const media = imageUrl
+          ? `<img src="${escapeHtml(imageUrl)}" alt="${escapeHtml(p.name)}" loading="lazy" />`
+          : `<span class="catalog-card-emoji">${escapeHtml(p.emoji || '🧸')}</span>`;
+        const desc = p.desc_text || p.desc || '';
+        const ctaLabel = stock > 0 ? 'Añadir al Carrito' : 'Sin stock';
+        return `
+          <article class="catalog-card">
+            <div class="catalog-card-media">${media}</div>
+            <div class="catalog-card-body">
+              <h3 class="catalog-card-title">${escapeHtml(p.name || 'Sin nombre')}</h3>
+              <p class="catalog-card-desc">${escapeHtml(desc)}</p>
+              <span class="catalog-card-price">${formatCLP(p.price)}</span>
+              <button class="catalog-card-cta" type="button" ${disabled} data-add="${escapeHtml(p.id)}">
+                ${ctaLabel}
+              </button>
+            </div>
+          </article>
+        `;
+      })
+      .join('');
 
-  grid.querySelectorAll('[data-add]').forEach((btn) => {
-    btn.addEventListener('click', () => {
-      if (typeof window.addToCart === 'function') {
-        window.addToCart(btn.dataset.add);
-      }
+    grid.querySelectorAll('[data-add]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        if (typeof window.addToCart === 'function') {
+          window.addToCart(btn.dataset.add);
+        }
+      });
     });
-  });
+  } catch (err) {
+    console.error('[catalog] error al renderizar tarjetas:', err);
+    grid.innerHTML = `<p class="catalog-status catalog-error">Error al renderizar productos: ${escapeHtml(err?.message || 'desconocido')}</p>`;
+  }
 }
 
 async function loadCatalog() {
@@ -99,7 +105,15 @@ async function loadCatalog() {
       state.error = 'La consulta a Supabase no devolvió una lista válida. Revisa la tabla "productos" y las políticas RLS.';
       state.products = [];
     } else {
-      state.products = data;
+      state.products = data.map((p) => ({
+        id: p.id,
+        name: p.name ?? '',
+        desc_text: p.desc_text ?? p.desc ?? '',
+        price: Number(p.price) || 0,
+        stock: p.stock == null ? 0 : Number(p.stock),
+        emoji: p.emoji || '🧸',
+        image_url: p.image_url || null,
+      }));
       if (typeof window.registerProducts === 'function') {
         window.registerProducts(state.products);
       }
