@@ -10,7 +10,6 @@
   <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;500;600;700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
   <link rel="stylesheet" href="css/catalog.css" />
-  <link rel="stylesheet" href="css/admin.css" />
 </head>
 <body>
 
@@ -23,7 +22,7 @@
   <!-- ===== HEADER ===== -->
   <header class="site-header">
     <div class="container header-inner">
-      <a href="#inicio" class="brand" aria-label="Patitas de Lana, inicio">
+      <a href="index.html" class="brand" aria-label="Patitas de Lana, inicio">
         <span class="brand-emoji" aria-hidden="true">🧶</span>
         <span class="brand-text">
           <strong>Patitas de Lana</strong>
@@ -59,50 +58,79 @@
   </header>
 
   <!-- ===== MODO DE COMPRA ===== -->
-  <section class="section mode-section" id="inicio">
-    <div class="container">
-      <header class="section-head">
-        <h2>Elige tu <span class="highlight">Modo de Compra</span></h2>
-        <p>
-          Cada puntada está hecha a mano. Selecciona cómo quieres llevarte tu
-          amigurumi: listo para envío o creado especialmente para ti.
+  <main>
+    <section class="section mode-section" id="inicio">
+      <div class="container">
+        <header class="section-head">
+          <h2>Elige tu <span class="highlight">Modo de Compra</span></h2>
+          <p>
+            Cada puntada está hecha a mano. Selecciona cómo quieres llevarte tu
+            amigurumi: listo para envío o creado especialmente para ti.
+          </p>
+        </header>
+
+        <div class="mode-selector" role="radiogroup" aria-label="Selecciona tu modo de compra">
+          <button type="button" class="mode-card" data-mode="stock" role="radio" aria-checked="false" tabindex="0">
+            <span class="mode-glow" aria-hidden="true"></span>
+            <span class="mode-icon" aria-hidden="true">🧸</span>
+            <span class="mode-title">Catálogo en Stock</span>
+            <span class="mode-desc">Amigurumis listos para envío inmediato a todo Chile.</span>
+            <span class="mode-badge">Envío en 24–48 h</span>
+            <span class="mode-check" aria-hidden="true">✓</span>
+          </button>
+
+          <button type="button" class="mode-card" data-mode="custom" role="radio" aria-checked="false" tabindex="0">
+            <span class="mode-glow" aria-hidden="true"></span>
+            <span class="mode-icon" aria-hidden="true">✨</span>
+            <span class="mode-title">Amigurumi Personalizado</span>
+            <span class="mode-desc">Encargos a medida: mascotas, personajes y más.</span>
+            <span class="mode-badge">Hecho para ti</span>
+            <span class="mode-check" aria-hidden="true">✓</span>
+          </button>
+        </div>
+
+        <p class="mode-hint" id="modeHint">Toca una tarjeta para comenzar ✨</p>
+
+        <p class="hero-sub mode-footer-note">
+          Piezas únicas tejidas con cariño. Elige entre nuestro catálogo en
+          stock o encarga un amigurumi personalizado.
         </p>
-      </header>
-
-      <div class="mode-selector" role="radiogroup" aria-label="Selecciona tu modo de compra">
-        <button class="mode-card" data-mode="stock" role="radio" aria-checked="false" tabindex="0">
-          <span class="mode-glow" aria-hidden="true"></span>
-          <span class="mode-icon" aria-hidden="true">🧸</span>
-          <span class="mode-title">Catálogo en Stock</span>
-          <span class="mode-desc">Amigurumis listos para envío inmediato a todo Chile.</span>
-          <span class="mode-badge">Envío en 24–48 h</span>
-          <span class="mode-check" aria-hidden="true">✓</span>
-        </button>
-
-        <button class="mode-card" data-mode="custom" role="radio" aria-checked="false" tabindex="0">
-          <span class="mode-glow" aria-hidden="true"></span>
-          <span class="mode-icon" aria-hidden="true">✨</span>
-          <span class="mode-title">Amigurumi Personalizado</span>
-          <span class="mode-desc">Encargos a medida: mascotas, personajes y más.</span>
-          <span class="mode-badge">Hecho para ti</span>
-          <span class="mode-check" aria-hidden="true">✓</span>
-        </button>
       </div>
+    </section>
+  </main>
 
-      <p class="mode-hint" id="modeHint">Toca una tarjeta para comenzar ✨</p>
-
-      <p class="hero-sub" style="text-align: center; margin-top: 2rem;">
-        Piezas únicas tejidas con cariño. Elige entre nuestro catálogo en
-        stock o encarga un amigurumi personalizado.
-      </p>
+  <!-- ===== FOOTER ===== -->
+  <footer class="site-footer">
+    <div class="container footer-grid">
+      <div>
+        <h4>Patitas de Lana</h4>
+        <p>Amigurumis tejidos a mano con amor en Chile.</p>
+        <div class="socials">
+          <a href="https://instagram.com" target="_blank" rel="noopener" aria-label="Instagram">📸 Instagram</a>
+          <a href="https://facebook.com" target="_blank" rel="noopener" aria-label="Facebook">👍 Facebook</a>
+          <a href="https://tiktok.com" target="_blank" rel="noopener" aria-label="TikTok">🎵 TikTok</a>
+        </div>
+      </div>
+      <div>
+        <h4>Medios de pago</h4>
+        <ul class="pay-list">
+          <li>💳 Webpay Plus</li>
+          <li>🏦 Redcompra (Débito)</li>
+          <li>💳 Crédito Transbank</li>
+          <li>🟦 Mercado Pago</li>
+        </ul>
+      </div>
     </div>
-  </section>
+    <div class="footer-bottom">
+      <p>© <span id="year"></span> Patitas de Lana · Hecho con 🧶 en Chile</p>
+    </div>
+  </footer>
 
   <!-- ===== CARRITO (DRAWER) ===== -->
   <aside class="cart-drawer" id="cartDrawer" aria-hidden="true" aria-label="Carrito de compras">
     <div class="cart-header">
       <h3>Tu carrito 🛒</h3>
-      <button class="cart-close" id="cartClose" aria-label="Cerrar carrito">✕</button>
+      <button type="button" class="cart-close" id="cartClose" aria-label="Cerrar carrito">✕</button>
     </div>
     <div class="cart-items" id="cartItems"></div>
     <div class="cart-footer">
@@ -110,7 +138,7 @@
         <span>Total</span>
         <strong id="cartTotal">CLP $0</strong>
       </div>
-      <button class="btn-checkout" id="checkoutBtn">Pagar con Webpay / Transbank</button>
+      <button type="button" class="btn-checkout" id="checkoutBtn">Pagar con Webpay / Transbank</button>
       <p class="cart-note">Pago seguro · Redcompra · Crédito · Mercado Pago</p>
     </div>
   </aside>
@@ -119,7 +147,7 @@
   <!-- ===== MODAL DE PAGO ===== -->
   <div class="modal" id="paymentModal" role="dialog" aria-modal="true" aria-labelledby="paymentTitle" hidden>
     <div class="modal-card">
-      <button class="modal-close" id="paymentClose" aria-label="Cerrar">✕</button>
+      <button type="button" class="modal-close" id="paymentClose" aria-label="Cerrar">✕</button>
       <h3 id="paymentTitle">Menú de pago</h3>
       <p class="modal-sub">Simulación de pago seguro para el mercado chileno.</p>
 
@@ -147,7 +175,7 @@
         <strong id="paymentAmount">CLP $0</strong>
       </div>
 
-      <button class="btn-pay" id="confirmPay">Confirmar pago</button>
+      <button type="button" class="btn-pay" id="confirmPay">Confirmar pago</button>
       <p class="modal-note">🔒 Esta es una simulación. No se realizará ningún cargo real.</p>
     </div>
   </div>
@@ -156,10 +184,9 @@
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
   <!-- Acceso discreto al panel de administración -->
-  <a href="#admin" data-open-admin class="admin-access" aria-label="Acceso administrador">⚙️</a>
+  <a href="admin.html" data-open-admin class="admin-access" aria-label="Acceso administrador">⚙️</a>
 
   <script src="script.js"></script>
   <script type="module" src="js/catalog.js"></script>
-  <script type="module" src="js/admin.js"></script>
 </body>
 </html>
