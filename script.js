@@ -304,16 +304,11 @@ function selectMode(mode) {
       : '✨ ¡Perfecto! Cuéntanos tu idea personalizada.';
   }
 
-  // "stock" abre el modal de catálogo (js/catalog.js); "custom" navega a personalizados
+  // "stock" navega a la vista de catálogo; "custom" navega a personalizados
   if (mode === 'stock') {
-    if (typeof window.openCatalog === 'function') {
-      window.openCatalog();
-    } else {
-      // Fallback: si el módulo aún no cargó, navega a la página del catálogo
-      setTimeout(() => {
-        window.location.href = 'catalogo.html';
-      }, 250);
-    }
+    setTimeout(() => {
+      window.location.href = 'catalogo.html';
+    }, 250);
   } else if (mode === 'custom') {
     setTimeout(() => {
       window.location.href = 'personalizados.html';
