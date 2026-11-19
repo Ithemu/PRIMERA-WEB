@@ -153,6 +153,26 @@
 
 .catalog-error { color: #B71C1C; }
 
+.catalog-empty {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.catalog-empty-hint {
+  font-size: 0.85rem;
+  color: var(--texto-suave);
+  max-width: 520px;
+}
+
+.catalog-empty-hint code {
+  background: var(--rosa-claro);
+  padding: 0.1rem 0.35rem;
+  border-radius: 6px;
+  font-size: 0.8rem;
+}
+
 /* ---------- Responsive ---------- */
 @media (max-width: 1024px) {
   .catalog-product-grid {

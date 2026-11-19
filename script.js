@@ -61,7 +61,10 @@ function saveCart() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(cart));
 }
 
-/* ---------- Carga de productos desde Supabase ---------- */
+/* ---------- Carga de productos desde Supabase ----------
+   El render del catálogo en stock vive en js/catalog.js (módulo ES).
+   Aquí solo registramos los productos para que el carrito pueda
+   resolverlos por id cuando se hace clic en "Añadir al Carrito". */
 async function fetchProducts() {
   try {
     const { fetchProducts: fetchFromSupabase } = await import('./js/supabase.js');
@@ -79,34 +82,9 @@ async function fetchProducts() {
     }));
 
     registerProducts(PRODUCTS);
-    renderProducts();
   } catch (err) {
     console.error('Error al cargar productos de Supabase:', err.message);
   }
-}
-
-/* ---------- Render de productos ---------- */
-function renderProducts() {
-  const grid = $('#productGrid');
-  if (!grid) return;
-
-  grid.innerHTML = PRODUCTS.map((p) => `
-    <article class="product-card">
-      <div class="product-img" aria-hidden="true">${p.emoji}</div>
-      <div class="product-body">
-        <h3 class="product-name">${p.name}</h3>
-        <p class="product-desc">${p.desc}</p>
-        <span class="product-price">${formatCLP(p.price)}</span>
-        <button class="btn-add" data-id="${p.id}">Añadir al Carrito</button>
-      </div>
-    </article>
-  `).join('');
-
-  grid.addEventListener('click', (e) => {
-    const btn = e.target.closest('.btn-add');
-    if (!btn) return;
-    addToCart(btn.dataset.id);
-  });
 }
 
 /* ---------- Carrito ---------- */
@@ -470,13 +448,13 @@ const yearEl = $('#year');
 if (yearEl) yearEl.textContent = new Date().getFullYear();
 
 /* ---------- Init ---------- */
-renderProducts();
 renderCart();
 closePayment();
 closeCart();
 
-/* Si estamos en catalogo.html, carga productos reales desde Supabase */
-if ($('#productGrid')) {
+/* Precarga productos desde Supabase para que el carrito pueda resolverlos.
+   El render visual del catálogo lo hace js/catalog.js. */
+if ($('#catalogGrid')) {
   fetchProducts();
 }
 

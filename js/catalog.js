@@ -38,7 +38,15 @@ function renderGrid() {
     return;
   }
   if (!state.products.length) {
-    grid.innerHTML = '<p class="catalog-status">Aún no hay productos en stock.</p>';
+    grid.innerHTML = `
+      <div class="catalog-status catalog-empty">
+        <p>🧶 Aún no hay productos en stock.</p>
+        <p class="catalog-empty-hint">
+          Si esperabas ver productos, revisa que la tabla <code>products</code> en Supabase
+          tenga filas y que las políticas RLS permitan lectura pública.
+        </p>
+      </div>
+    `;
     return;
   }
 
@@ -112,8 +120,17 @@ export function closeCatalog() {
 window.openCatalog = openCatalog;
 window.closeCatalog = closeCatalog;
 
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', loadCatalog);
-} else {
+function bootstrap() {
+  const grid = $('#catalogGrid');
+  if (!grid) return;
+  // Estado inicial visible mientras llega la respuesta de Supabase
+  state.loading = true;
+  renderGrid();
   loadCatalog();
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', bootstrap);
+} else {
+  bootstrap();
 }
