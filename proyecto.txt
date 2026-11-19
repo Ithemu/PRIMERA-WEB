@@ -1,0 +1,1439 @@
+<!DOCTYPE html>
+<html lang="es-CL">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Catálogo · Patitas de Lana</title>
+  <meta name="description" content="Catálogo en stock de amigurumis tejidos a mano en Chile." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;500;600;700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="css/catalog.css" />
+</head>
+<body>
+
+  <div class="announcement-bar" aria-hidden="true">
+    <div class="announcement-content">
+      ✨ Envíos a todo Chile 🚚 • Amigurumis 100% hechos a mano 🧶 • Calidad y cariño en cada puntada ✨
+    </div>
+  </div>
+
+  <!-- ===== HEADER ===== -->
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="index.html" class="brand" aria-label="Patitas de Lana, inicio">
+        <span class="brand-emoji" aria-hidden="true">🧶</span>
+        <span class="brand-text">
+          <strong>Patitas de Lana</strong>
+          <small>Amigurumis hechos a mano</small>
+        </span>
+      </a>
+
+      <nav class="main-nav" aria-label="Navegación principal">
+        <a href="index.html">Inicio</a>
+        <a href="nosotros.html">Nosotros</a>
+        <a href="contacto.html">Contacto</a>
+      </nav>
+
+      <button class="cart-toggle" id="cartToggle" aria-label="Abrir carrito de compras">
+        <span aria-hidden="true">🛒</span>
+        <span class="cart-count" id="cartCount">0</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- ===== HERO CATÁLOGO ===== -->
+  <section class="catalog-hero">
+    <div class="container catalog-hero-inner">
+      <p class="catalog-hero-eyebrow">🧶 Hecho a mano en Chile</p>
+      <h1>Catálogo en Stock</h1>
+      <p class="catalog-hero-sub">
+        Piezas únicas listas para viajar a tu hogar. Precios en pesos chilenos (CLP).
+      </p>
+    </div>
+  </section>
+
+  <!-- ===== CATÁLOGO EN STOCK ===== -->
+  <section class="section catalog-section" id="catalogo" data-mode-section="stock">
+    <div class="container">
+      <div class="catalog-product-grid" id="catalogGrid" aria-live="polite">
+        <!-- Los productos se generan dinámicamente desde js/catalog.js (Supabase) -->
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="site-footer">
+    <div class="container footer-grid">
+      <div>
+        <h4>Patitas de Lana</h4>
+        <p>Amigurumis tejidos a mano con amor en Chile.</p>
+        <div class="socials">
+          <a href="https://instagram.com" target="_blank" rel="noopener" aria-label="Instagram">📸 Instagram</a>
+          <a href="https://facebook.com" target="_blank" rel="noopener" aria-label="Facebook">👍 Facebook</a>
+          <a href="https://tiktok.com" target="_blank" rel="noopener" aria-label="TikTok">🎵 TikTok</a>
+        </div>
+      </div>
+      <div>
+        <h4>Contacto</h4>
+        <p>📧 hola@patitasdelana.cl</p>
+        <p>📱 +56 9 1234 5678</p>
+        <p>📍 Santiago, Chile</p>
+      </div>
+      <div>
+        <h4>Medios de pago</h4>
+        <ul class="pay-list">
+          <li>💳 Webpay Plus</li>
+          <li>🏦 Redcompra (Débito)</li>
+          <li>💳 Crédito Transbank</li>
+          <li>🟦 Mercado Pago</li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© <span id="year"></span> Patitas de Lana · Hecho con 🧶 en Chile</p>
+    </div>
+  </footer>
+
+  <!-- ===== CARRITO (DRAWER) ===== -->
+  <aside class="cart-drawer" id="cartDrawer" aria-hidden="true" aria-label="Carrito de compras">
+    <div class="cart-header">
+      <h3>Tu carrito 🛒</h3>
+      <button class="cart-close" id="cartClose" aria-label="Cerrar carrito">✕</button>
+    </div>
+    <div class="cart-items" id="cartItems"></div>
+    <div class="cart-footer">
+      <div class="cart-total-row">
+        <span>Total</span>
+        <strong id="cartTotal">CLP $0</strong>
+      </div>
+      <button class="btn-checkout" id="checkoutBtn">Pagar con Webpay / Transbank</button>
+      <p class="cart-note">Pago seguro · Redcompra · Crédito · Mercado Pago</p>
+    </div>
+  </aside>
+  <div class="overlay" id="overlay" hidden></div>
+
+  <!-- ===== MODAL DE PAGO ===== -->
+  <div class="modal" id="paymentModal" role="dialog" aria-modal="true" aria-labelledby="paymentTitle" hidden>
+    <div class="modal-card">
+      <button class="modal-close" id="paymentClose" aria-label="Cerrar">✕</button>
+      <h3 id="paymentTitle">Menú de pago</h3>
+      <p class="modal-sub">Simulación de pago seguro para el mercado chileno.</p>
+
+      <div class="payment-methods">
+        <label class="pay-method">
+          <input type="radio" name="payMethod" value="Webpay Plus" checked />
+          <span>💳 Webpay Plus</span>
+        </label>
+        <label class="pay-method">
+          <input type="radio" name="payMethod" value="Débito Redcompra" />
+          <span>🏦 Débito Redcompra</span>
+        </label>
+        <label class="pay-method">
+          <input type="radio" name="payMethod" value="Crédito Transbank" />
+          <span>💳 Crédito Transbank</span>
+        </label>
+        <label class="pay-method">
+          <input type="radio" name="payMethod" value="Mercado Pago" />
+          <span>🟦 Mercado Pago</span>
+        </label>
+      </div>
+
+      <div class="payment-summary">
+        <span>Monto a pagar</span>
+        <strong id="paymentAmount">CLP $0</strong>
+      </div>
+
+      <button class="btn-pay" id="confirmPay">Confirmar pago</button>
+      <p class="modal-note">🔒 Esta es una simulación. No se realizará ningún cargo real.</p>
+    </div>
+  </div>
+
+  <!-- ===== TOAST ===== -->
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="script.js"></script>
+  <script type="module" src="js/catalog.js"></script>
+</body>
+</html>
+/* =========================================================
+   Catálogo en Stock · Vista de página (Hero + Grid)
+   ========================================================= */
+
+/* ---------- Hero (compartido con otras páginas) ---------- */
+.catalog-hero {
+  background: linear-gradient(135deg, var(--rosa-claro), var(--crema));
+  padding: 3.5rem 0 3rem;
+  text-align: center;
+  border-bottom: 1px solid var(--lana-gris);
+}
+
+.catalog-hero-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.catalog-hero-eyebrow {
+  font-size: 0.8rem;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--rosa-fuerte);
+}
+
+.catalog-hero h1 {
+  font-family: 'Baloo 2', sans-serif;
+  font-size: clamp(2rem, 4vw, 3rem);
+  color: var(--texto);
+  margin: 0;
+}
+
+.catalog-hero-sub {
+  max-width: 620px;
+  color: var(--texto-suave);
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+/* ---------- Grid de productos ---------- */
+.catalog-section {
+  padding: 3rem 0 4rem;
+}
+
+.catalog-product-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.5rem;
+}
+
+/* ---------- Product Card ---------- */
+.catalog-card {
+  background: var(--blanco);
+  border-radius: var(--radio);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: var(--sombra);
+  border: 1px solid var(--lana-gris);
+  transition: transform var(--transicion), box-shadow var(--transicion);
+}
+
+.catalog-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--sombra-fuerte);
+}
+
+.catalog-card-media {
+  aspect-ratio: 1 / 1;
+  background: linear-gradient(135deg, var(--rosa-claro), var(--crema));
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+}
+
+.catalog-card-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.catalog-card-emoji {
+  font-size: 4rem;
+  line-height: 1;
+}
+
+.catalog-card-body {
+  padding: 1rem 1.1rem 1.2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  flex: 1;
+}
+
+.catalog-card-title {
+  font-family: 'Baloo 2', sans-serif;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--texto);
+  margin: 0;
+}
+
+.catalog-card-desc {
+  font-size: 0.85rem;
+  color: var(--texto-suave);
+  line-height: 1.5;
+  margin: 0;
+  flex: 1;
+}
+
+.catalog-card-price {
+  font-family: 'Baloo 2', sans-serif;
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--rosa-fuerte);
+  text-align: left;
+}
+
+.catalog-card-cta {
+  border: none;
+  background: var(--rosa-medio);
+  color: var(--texto);
+  font-family: inherit;
+  font-weight: 800;
+  font-size: 0.9rem;
+  padding: 0.75rem 1rem;
+  border-radius: var(--radio-boton);
+  cursor: pointer;
+  transition: background var(--transicion), transform var(--transicion), box-shadow var(--transicion);
+}
+
+.catalog-card-cta:hover:not(:disabled) {
+  background: var(--rosa-fuerte);
+  color: var(--blanco);
+  transform: translateY(-1px);
+  box-shadow: var(--sombra);
+}
+
+.catalog-card-cta:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ---------- Estados ---------- */
+.catalog-status {
+  grid-column: 1 / -1;
+  text-align: center;
+  color: var(--texto-suave);
+  padding: 2rem 0;
+}
+
+.catalog-error { color: #B71C1C; }
+
+.catalog-empty {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.catalog-empty-hint {
+  font-size: 0.85rem;
+  color: var(--texto-suave);
+  max-width: 520px;
+}
+
+.catalog-empty-hint code {
+  background: var(--rosa-claro);
+  padding: 0.1rem 0.35rem;
+  border-radius: 6px;
+  font-size: 0.8rem;
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 1024px) {
+  .catalog-product-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 780px) {
+  .catalog-product-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+  .catalog-hero {
+    padding: 2.5rem 0 2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .catalog-product-grid {
+    grid-template-columns: 1fr;
+  }
+}
+import { fetchProducts } from './supabase.js';
+
+const state = {
+  products: [],
+  loading: false,
+  error: null,
+};
+
+const $ = (sel, ctx = document) => ctx.querySelector(sel);
+
+function formatCLP(value) {
+  return new Intl.NumberFormat('es-CL', {
+    style: 'currency',
+    currency: 'CLP',
+    maximumFractionDigits: 0,
+  }).format(value);
+}
+
+function escapeHtml(str) {
+  return String(str ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+function renderGrid() {
+  const grid = $('#catalogGrid');
+  if (!grid) return;
+
+  if (state.loading) {
+    grid.innerHTML = '<p class="catalog-status">Cargando amigurumis… 🧶</p>';
+    return;
+  }
+  if (state.error) {
+    grid.innerHTML = `<p class="catalog-status catalog-error">No pudimos cargar el catálogo: ${escapeHtml(state.error)}</p>`;
+    return;
+  }
+  if (!state.products.length) {
+    grid.innerHTML = `
+      <div class="catalog-status catalog-empty">
+        <p>🧶 Aún no hay productos en stock.</p>
+        <p class="catalog-empty-hint">
+          Si esperabas ver productos, revisa que la tabla <code>products</code> en Supabase
+          tenga filas y que las políticas RLS permitan lectura pública.
+        </p>
+      </div>
+    `;
+    return;
+  }
+
+  grid.innerHTML = state.products
+    .map((p) => {
+      const stock = Number(p.stock ?? 0);
+      const disabled = stock <= 0 ? 'disabled' : '';
+      const media = p.image_url
+        ? `<img src="${escapeHtml(p.image_url)}" alt="${escapeHtml(p.name)}" loading="lazy" />`
+        : `<span class="catalog-card-emoji">${escapeHtml(p.emoji || '🧸')}</span>`;
+      const desc = p.desc_text || p.desc || '';
+      const ctaLabel = stock > 0 ? 'Añadir al Carrito' : 'Sin stock';
+      return `
+        <article class="catalog-card">
+          <div class="catalog-card-media">${media}</div>
+          <div class="catalog-card-body">
+            <h3 class="catalog-card-title">${escapeHtml(p.name)}</h3>
+            <p class="catalog-card-desc">${escapeHtml(desc)}</p>
+            <span class="catalog-card-price">${formatCLP(p.price)}</span>
+            <button class="catalog-card-cta" type="button" ${disabled} data-add="${escapeHtml(p.id)}">
+              ${ctaLabel}
+            </button>
+          </div>
+        </article>
+      `;
+    })
+    .join('');
+
+  grid.querySelectorAll('[data-add]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      if (typeof window.addToCart === 'function') {
+        window.addToCart(btn.dataset.add);
+      }
+    });
+  });
+}
+
+async function loadCatalog() {
+  const grid = $('#catalogGrid');
+  if (!grid) return;
+
+  state.loading = true;
+  state.error = null;
+  renderGrid();
+
+  try {
+    state.products = await fetchProducts();
+    if (typeof window.registerProducts === 'function') {
+      window.registerProducts(state.products);
+    }
+  } catch (err) {
+    const msg = err?.message || 'Error desconocido';
+    state.error = /failed to fetch/i.test(msg)
+      ? 'No se pudo conectar con el servidor. Verifica tu conexión o que el sitio se esté sirviendo por HTTP (no file://).'
+      : msg;
+  } finally {
+    state.loading = false;
+    renderGrid();
+  }
+}
+
+/* Compatibilidad: si algún trigger antiguo llama a openCatalog, solo recarga */
+export async function openCatalog() {
+  await loadCatalog();
+}
+
+export function closeCatalog() {
+  /* No-op: el catálogo ahora es una vista de página, no un modal */
+}
+
+window.openCatalog = openCatalog;
+window.closeCatalog = closeCatalog;
+
+function bootstrap() {
+  const grid = $('#catalogGrid');
+  if (!grid) return;
+  // Estado inicial visible mientras llega la respuesta de Supabase
+  state.loading = true;
+  renderGrid();
+  loadCatalog();
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', bootstrap);
+} else {
+  bootstrap();
+}
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+
+const supabaseUrl = 'https://ogkqjyoiadovchobbnik.supabase.co';
+const supabaseKey = 'sb_publishable_DrVZWQpgCbF4pZfWh0UdMQ_cLRvIAut';
+
+export const supabase = createClient(supabaseUrl, supabaseKey);
+
+const TABLE = 'productos';
+
+function normalizePayload(payload = {}) {
+  const out = {
+    name: (payload.name ?? '').toString().trim(),
+    desc_text: (payload.desc_text ?? payload.desc ?? '').toString().trim(),
+    price: Number(payload.price) || 0,
+    stock: Number(payload.stock) || 0,
+    emoji: (payload.emoji ?? '🧸').toString().trim() || '🧸',
+    image_url: payload.image_url ? payload.image_url.toString().trim() : null,
+  };
+  if (payload.category != null) out.category = payload.category.toString().trim();
+  if (payload.id != null && String(payload.id).trim() !== '') {
+    out.id = payload.id;
+  }
+  return out;
+}
+
+export async function fetchProducts() {
+  const { data, error } = await supabase
+    .from(TABLE)
+    .select('*')
+    .order('id', { ascending: true });
+  if (error) throw error;
+  return data ?? [];
+}
+
+export async function createProduct(payload) {
+  const { data, error } = await supabase
+    .from(TABLE)
+    .insert(normalizePayload(payload))
+    .select()
+    .single();
+  if (error) throw error;
+  return data;
+}
+
+export async function updateProduct(id, payload) {
+  const clean = normalizePayload(payload);
+  delete clean.id;
+  const { data, error } = await supabase
+    .from(TABLE)
+    .update(clean)
+    .eq('id', id)
+    .select()
+    .single();
+  if (error) throw error;
+  return data;
+}
+
+export async function deleteProduct(id) {
+  const { error } = await supabase.from(TABLE).delete().eq('id', id);
+  if (error) throw error;
+}
+
+export async function signInAdmin(email, password) {
+  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+  if (error) throw error;
+  return data;
+}
+
+export async function signOutAdmin() {
+  const { error } = await supabase.auth.signOut();
+  if (error) throw error;
+}
+
+export async function getSession() {
+  const { data } = await supabase.auth.getSession();
+  return data.session;
+}
+/* =========================================================
+   Patitas de Lana · Lógica interactiva con Supabase
+   ========================================================= */
+
+const WHATSAPP_NUMBER = '56912345678'; // Cambia por el número real de la tienda
+
+/* ---------- Datos de productos ---------- */
+let PRODUCTS = [];
+
+/* Productos dinámicos (Supabase) registrados desde js/catalog.js */
+const dynamicProducts = new Map();
+
+function registerProducts(list) {
+  if (!Array.isArray(list)) return;
+  list.forEach((p) => {
+    if (p && p.id != null) {
+      dynamicProducts.set(String(p.id), {
+        id: String(p.id),
+        name: p.name,
+        desc: p.desc || '',
+        price: Number(p.price) || 0,
+        emoji: p.emoji || '🧸',
+        image_url: p.image_url || null,
+      });
+    }
+  });
+}
+
+function findProduct(id) {
+  const key = String(id);
+  return dynamicProducts.get(key) || PRODUCTS.find((p) => String(p.id) === key);
+}
+
+window.registerProducts = registerProducts;
+
+/* ---------- Utilidades ---------- */
+const formatCLP = (value) => {
+  const n = Number(value);
+  const safe = Number.isFinite(n) ? n : 0;
+  return 'CLP $' + safe.toLocaleString('es-CL', { maximumFractionDigits: 0 });
+};
+
+const $ = (sel, ctx = document) => ctx.querySelector(sel);
+const $$ = (sel, ctx = document) => Array.from(ctx.querySelectorAll(sel));
+
+/* ---------- Estado del carrito ---------- */
+const STORAGE_KEY = 'patitas-de-lana-cart';
+
+let cart = loadCart();
+
+function loadCart() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    return raw ? JSON.parse(raw) : [];
+  } catch {
+    return [];
+  }
+}
+
+function saveCart() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(cart));
+}
+
+/* ---------- Carga de productos desde Supabase ----------
+   El render del catálogo en stock vive en js/catalog.js (módulo ES).
+   Aquí solo registramos los productos para que el carrito pueda
+   resolverlos por id cuando se hace clic en "Añadir al Carrito". */
+async function fetchProducts() {
+  try {
+    const { fetchProducts: fetchFromSupabase } = await import('./js/supabase.js');
+    const data = await fetchFromSupabase();
+    if (!Array.isArray(data)) return;
+
+    PRODUCTS = data.map((p) => ({
+      id: p.id,
+      name: p.name,
+      desc: p.desc_text || p.desc || '',
+      price: Number(p.price) || 0,
+      emoji: p.emoji || '🧸',
+      image_url: p.image_url || null,
+      stock: p.stock ?? 0,
+    }));
+
+    registerProducts(PRODUCTS);
+  } catch (err) {
+    console.error('Error al cargar productos de Supabase:', err.message);
+  }
+}
+
+/* ---------- Carrito ---------- */
+function addToCart(id) {
+  const product = findProduct(id);
+  if (!product) return;
+
+  const key = String(product.id);
+  const existing = cart.find((item) => String(item.id) === key);
+  if (existing) {
+    existing.qty += 1;
+  } else {
+    cart.push({
+      id: key,
+      name: product.name,
+      price: product.price,
+      emoji: product.emoji,
+      image_url: product.image_url || null,
+      qty: 1,
+    });
+  }
+
+  saveCart();
+  renderCart();
+  showToast(`✨ ${product.name} añadido al carrito`);
+}
+
+window.addToCart = addToCart;
+
+function removeFromCart(id) {
+  const key = String(id);
+  cart = cart.filter((item) => String(item.id) !== key);
+  saveCart();
+  renderCart();
+}
+
+function changeQty(id, delta) {
+  const key = String(id);
+  const item = cart.find((i) => String(i.id) === key);
+  if (!item) return;
+  item.qty += delta;
+  if (item.qty <= 0) {
+    removeFromCart(id);
+    return;
+  }
+  saveCart();
+  renderCart();
+}
+
+function getTotal() {
+  return cart.reduce((sum, item) => sum + item.price * item.qty, 0);
+}
+
+function getCount() {
+  return cart.reduce((sum, item) => sum + item.qty, 0);
+}
+
+function renderCart() {
+  const itemsEl = $('#cartItems');
+  const totalEl = $('#cartTotal');
+  const countEl = $('#cartCount');
+  const checkoutBtn = $('#checkoutBtn');
+
+  if (!itemsEl) return;
+
+  if (cart.length === 0) {
+    itemsEl.innerHTML = '<p class="cart-empty">Tu carrito está vacío 🧶<br>¡Agrega un amigurumi!</p>';
+  } else {
+    itemsEl.innerHTML = cart.map((item) => `
+      <div class="cart-item">
+        <div class="cart-item-img" aria-hidden="true">${item.emoji}</div>
+        <div class="cart-item-info">
+          <h4>${item.name}</h4>
+          <span>${formatCLP(item.price)} c/u</span>
+          <div class="qty-controls">
+            <button data-action="dec" data-id="${item.id}" aria-label="Quitar uno">−</button>
+            <span>${item.qty}</span>
+            <button data-action="inc" data-id="${item.id}" aria-label="Agregar uno">+</button>
+          </div>
+        </div>
+        <button class="cart-item-remove" data-action="remove" data-id="${item.id}" aria-label="Eliminar">🗑️</button>
+      </div>
+    `).join('');
+  }
+
+  if (totalEl) totalEl.textContent = formatCLP(getTotal());
+  if (countEl) countEl.textContent = getCount();
+  if (checkoutBtn) checkoutBtn.disabled = cart.length === 0;
+}
+
+/* Delegación de eventos del carrito */
+document.addEventListener('click', (e) => {
+  const btn = e.target.closest('[data-action]');
+  if (!btn) return;
+  const { action, id } = btn.dataset;
+  if (action === 'inc') changeQty(id, 1);
+  if (action === 'dec') changeQty(id, -1);
+  if (action === 'remove') removeFromCart(id);
+});
+
+/* ---------- Drawer del carrito ---------- */
+const cartDrawer = $('#cartDrawer');
+const overlay = $('#overlay');
+
+function openCart() {
+  if (cartDrawer) {
+    cartDrawer.classList.add('open');
+    cartDrawer.setAttribute('aria-hidden', 'false');
+  }
+  if (overlay) overlay.style.display = '';
+}
+
+function closeCart() {
+  if (cartDrawer) {
+    cartDrawer.classList.remove('open');
+    cartDrawer.setAttribute('aria-hidden', 'true');
+  }
+  if (overlay) overlay.style.display = 'none';
+}
+
+const cartToggle = $('#cartToggle');
+const cartClose = $('#cartClose');
+if (cartToggle) cartToggle.addEventListener('click', openCart);
+if (cartClose) cartClose.addEventListener('click', closeCart);
+if (overlay) {
+  overlay.addEventListener('click', () => {
+    closeCart();
+    closePayment();
+  });
+}
+
+/* ---------- Modal de pago ---------- */
+const paymentModal = $('#paymentModal');
+
+function openPayment() {
+  if (cart.length === 0) return;
+  const amountEl = $('#paymentAmount');
+  if (amountEl) amountEl.textContent = formatCLP(getTotal());
+  if (paymentModal) {
+    paymentModal.removeAttribute('hidden');
+    paymentModal.style.display = '';
+  }
+  if (overlay) overlay.style.display = '';
+}
+
+function closePayment() {
+  if (paymentModal) {
+    paymentModal.style.display = 'none';
+    paymentModal.setAttribute('hidden', '');
+  }
+  if (overlay && (!cartDrawer || !cartDrawer.classList.contains('open'))) {
+    overlay.style.display = 'none';
+  }
+}
+
+const checkoutBtn = $('#checkoutBtn');
+const paymentClose = $('#paymentClose');
+const confirmPay = $('#confirmPay');
+
+if (checkoutBtn) checkoutBtn.addEventListener('click', openPayment);
+if (paymentClose) paymentClose.addEventListener('click', closePayment);
+
+if (confirmPay) {
+  confirmPay.addEventListener('click', () => {
+    const method = $('input[name="payMethod"]:checked').value;
+    const total = formatCLP(getTotal());
+    showToast(`✅ Pago simulado con ${method} por ${total}`);
+    cart = [];
+    saveCart();
+    renderCart();
+    closePayment();
+    closeCart();
+  });
+}
+
+/* ---------- Selector de modo ---------- */
+const modeCards = $$('.mode-card');
+const modeHint = $('#modeHint');
+const sections = $$('[data-mode-section]');
+
+function selectMode(mode) {
+  modeCards.forEach((card) => {
+    const isSelected = card.dataset.mode === mode;
+    card.classList.toggle('selected', isSelected);
+    card.setAttribute('aria-checked', String(isSelected));
+  });
+
+  sections.forEach((sec) => {
+    sec.classList.toggle('active', sec.dataset.modeSection === mode);
+  });
+
+  if (modeHint) {
+    modeHint.textContent = mode === 'stock'
+      ? '🛍️ ¡Genial! Explora el catálogo en stock.'
+      : '✨ ¡Perfecto! Cuéntanos tu idea personalizada.';
+  }
+
+  // "stock" navega a la vista de catálogo; "custom" navega a personalizados
+  if (mode === 'stock') {
+    setTimeout(() => {
+      window.location.href = 'catalogo.html';
+    }, 250);
+  } else if (mode === 'custom') {
+    setTimeout(() => {
+      window.location.href = 'personalizados.html';
+    }, 250);
+  }
+}
+
+modeCards.forEach((card) => {
+  card.addEventListener('click', () => selectMode(card.dataset.mode));
+  card.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      selectMode(card.dataset.mode);
+    }
+  });
+});
+
+/* ---------- Carga de imágenes de referencia ---------- */
+const uploadInput = $('#imagenes');
+const uploadBtn = $('#uploadBtn');
+const uploadArea = $('#uploadArea');
+const uploadPreview = $('#uploadPreview');
+
+let uploadedFiles = [];
+
+function renderUploadPreview() {
+  if (!uploadPreview) return;
+  uploadPreview.innerHTML = uploadedFiles.map((file, idx) => `
+    <div class="upload-thumb">
+      <img src="${file.url}" alt="${file.name}" />
+      <button type="button" data-remove="${idx}" aria-label="Quitar imagen">✕</button>
+    </div>
+  `).join('');
+}
+
+function addFiles(fileList) {
+  const files = Array.from(fileList || []).filter((f) => f.type.startsWith('image/'));
+  files.forEach((file) => {
+    uploadedFiles.push({
+      name: file.name,
+      url: URL.createObjectURL(file),
+    });
+  });
+  renderUploadPreview();
+}
+
+if (uploadBtn && uploadInput) {
+  uploadBtn.addEventListener('click', () => uploadInput.click());
+  uploadInput.addEventListener('change', (e) => {
+    addFiles(e.target.files);
+    uploadInput.value = '';
+  });
+}
+
+if (uploadArea) {
+  ['dragenter', 'dragover'].forEach((evt) => {
+    uploadArea.addEventListener(evt, (e) => {
+      e.preventDefault();
+      uploadArea.classList.add('dragover');
+    });
+  });
+  ['dragleave', 'drop'].forEach((evt) => {
+    uploadArea.addEventListener(evt, (e) => {
+      e.preventDefault();
+      uploadArea.classList.remove('dragover');
+    });
+  });
+  uploadArea.addEventListener('drop', (e) => {
+    if (e.dataTransfer?.files) addFiles(e.dataTransfer.files);
+  });
+}
+
+if (uploadPreview) {
+  uploadPreview.addEventListener('click', (e) => {
+    const btn = e.target.closest('[data-remove]');
+    if (!btn) return;
+    const idx = Number(btn.dataset.remove);
+    const removed = uploadedFiles.splice(idx, 1)[0];
+    if (removed?.url) URL.revokeObjectURL(removed.url);
+    renderUploadPreview();
+  });
+}
+
+/* ---------- Formulario personalizado → WhatsApp ---------- */
+const customForm = $('#customForm');
+if (customForm) {
+  customForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+
+    const tipo = $('#tipo').value;
+    const tamano = $('#tamano').value;
+    const colores = $('#colores').value.trim() || 'A definir';
+    const nombre = $('#nombre').value.trim();
+    const detalles = $('#detalles').value.trim() || 'Sin detalles adicionales';
+    const ideaEl = $('#idea');
+    const idea = ideaEl ? ideaEl.value.trim() : '';
+
+    if (!nombre) {
+      showToast('Por favor, ingresa tu nombre 😊');
+      $('#nombre').focus();
+      return;
+    }
+
+    const imagenesTxt = uploadedFiles.length
+      ? uploadedFiles.map((f) => `  - ${f.name}`).join('\n')
+      : '  (sin imágenes adjuntas)';
+
+    let mensaje =
+      `¡Hola Patitas de Lana! 🧶 Quiero cotizar un amigurumi personalizado:\n\n` +
+      `• Tipo: ${tipo}\n` +
+      `• Tamaño: ${tamano}\n` +
+      `• Colores: ${colores}\n` +
+      `• Detalles: ${detalles}\n`;
+
+    if (idea) mensaje += `• Idea: ${idea}\n`;
+
+    mensaje +=
+      `• Imágenes de referencia:\n${imagenesTxt}\n\n` +
+      `Mi nombre es ${nombre}. ¡Gracias!`;
+
+    const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(mensaje)}`;
+    window.open(url, '_blank', 'noopener');
+  });
+}
+
+/* ---------- Toast ---------- */
+let toastTimer;
+function showToast(message) {
+  const toast = $('#toast');
+  if (!toast) return;
+  toast.textContent = message;
+  toast.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => toast.classList.remove('show'), 2800);
+}
+
+/* ---------- Menú hamburguesa ---------- */
+const navToggle = $('#navToggle');
+const mobileNav = $('#mobileNav');
+
+if (navToggle && mobileNav) {
+  navToggle.addEventListener('click', () => {
+    const isOpen = mobileNav.classList.toggle('open');
+    navToggle.setAttribute('aria-expanded', String(isOpen));
+    navToggle.setAttribute('aria-label', isOpen ? 'Cerrar menú' : 'Abrir menú');
+  });
+
+  mobileNav.querySelectorAll('a').forEach((link) => {
+    link.addEventListener('click', () => {
+      mobileNav.classList.remove('open');
+      navToggle.setAttribute('aria-expanded', 'false');
+      navToggle.setAttribute('aria-label', 'Abrir menú');
+    });
+  });
+}
+
+/* ---------- Año dinámico ---------- */
+const yearEl = $('#year');
+if (yearEl) yearEl.textContent = new Date().getFullYear();
+
+/* ---------- Init ---------- */
+renderCart();
+closePayment();
+closeCart();
+
+/* Precarga productos desde Supabase para que el carrito pueda resolverlos.
+   El render visual del catálogo lo hace js/catalog.js. */
+if ($('#catalogGrid')) {
+  fetchProducts();
+}
+
+/* Asegura que la página siempre inicie en "Inicio" */
+if (window.location.hash) {
+  history.replaceState(null, '', window.location.pathname);
+}
+<!DOCTYPE html>
+<html lang="es-CL">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Personalizados · Patitas de Lana</title>
+  <meta name="description" content="Encarga tu amigurumi personalizado tejido a mano en Chile." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;500;600;700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="css/catalog.css" />
+</head>
+<body>
+
+  <div class="announcement-bar" aria-hidden="true">
+    <div class="announcement-content">
+      ✨ Envíos a todo Chile 🚚 • Amigurumis 100% hechos a mano 🧶 • Calidad y cariño en cada puntada ✨
+    </div>
+  </div>
+
+  <!-- ===== HEADER ===== -->
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="index.html" class="brand" aria-label="Patitas de Lana, inicio">
+        <span class="brand-emoji" aria-hidden="true">🧶</span>
+        <span class="brand-text">
+          <strong>Patitas de Lana</strong>
+          <small>Amigurumis hechos a mano</small>
+        </span>
+      </a>
+
+      <nav class="main-nav" aria-label="Navegación principal">
+        <a href="index.html">Inicio</a>
+        <a href="papeleria.html">Papelería</a>
+        <a href="nosotros.html">Nosotros</a>
+        <a href="contacto.html">Contacto</a>
+      </nav>
+
+      <button class="cart-toggle" id="cartToggle" aria-label="Abrir carrito de compras">
+        <span aria-hidden="true">🛒</span>
+        <span class="cart-count" id="cartCount">0</span>
+      </button>
+
+      <button class="nav-toggle" id="navToggle" aria-label="Abrir menú" aria-expanded="false" aria-controls="mobileNav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+
+    <nav class="mobile-nav" id="mobileNav" aria-label="Navegación móvil">
+      <a href="index.html">Inicio</a>
+      <a href="papeleria.html">Papelería</a>
+      <a href="nosotros.html">Nosotros</a>
+      <a href="contacto.html">Contacto</a>
+    </nav>
+  </header>
+
+  <!-- ===== HERO PERSONALIZADOS ===== -->
+  <section class="catalog-hero">
+    <div class="container catalog-hero-inner">
+      <p class="catalog-hero-eyebrow">✨ Hecho para ti</p>
+      <h1>Amigurumis Personalizados</h1>
+      <p class="catalog-hero-sub">
+        Cuéntanos tu idea y la tejemos a mano, puntada por puntada.
+      </p>
+    </div>
+  </section>
+
+  <!-- ===== PERSONALIZADOS ===== -->
+  <section class="section custom-section" id="personalizados">
+    <div class="container">
+      <div class="custom-layout">
+        <div class="custom-options">
+          <article class="option-card">
+            <span class="option-icon" aria-hidden="true">🐶</span>
+            <h3>Mascotas</h3>
+            <p>Retratos tejidos de tu perrito o gatito con sus colores reales.</p>
+          </article>
+          <article class="option-card">
+            <span class="option-icon" aria-hidden="true">🦸</span>
+            <h3>Personajes</h3>
+            <p>Superhéroes, anime, videojuegos o tu personaje favorito.</p>
+          </article>
+          <article class="option-card">
+            <span class="option-icon" aria-hidden="true">📏</span>
+            <h3>Tamaños</h3>
+            <p>Desde mini llaveros de 8 cm hasta piezas gigantes de 40 cm.</p>
+          </article>
+          <article class="option-card">
+            <span class="option-icon" aria-hidden="true">🎨</span>
+            <h3>Colores</h3>
+            <p>Elige la paleta exacta: pasteles, vibrantes o tonos neutros.</p>
+          </article>
+        </div>
+
+        <form class="custom-form" id="customForm" novalidate>
+          <h3>Solicitud rápida</h3>
+
+          <label for="tipo">¿Qué quieres tejer?</label>
+          <select id="tipo" name="tipo" required>
+            <option value="Mascota">Mascota (perro/gato)</option>
+            <option value="Personaje">Personaje / Anime</option>
+            <option value="Animal">Animalito genérico</option>
+            <option value="Llavero">Llavero mini</option>
+            <option value="Otro">Otro (cuéntanos)</option>
+          </select>
+
+          <label for="tamano">Tamaño aproximado</label>
+          <select id="tamano" name="tamano" required>
+            <option value="Mini (8 cm)">Mini (8 cm)</option>
+            <option value="Mediano (15 cm)" selected>Mediano (15 cm)</option>
+            <option value="Grande (25 cm)">Grande (25 cm)</option>
+            <option value="Gigante (40 cm)">Gigante (40 cm)</option>
+          </select>
+
+          <label for="colores">Colores deseados</label>
+          <input type="text" id="colores" name="colores" placeholder="Ej: rosa pastel, blanco y crema" />
+
+          <label for="nombre">Tu nombre</label>
+          <input type="text" id="nombre" name="nombre" placeholder="Ej: Camila" required />
+
+          <label for="detalles">Detalles adicionales</label>
+          <textarea id="detalles" name="detalles" rows="3" placeholder="Cuéntanos más sobre tu idea..."></textarea>
+
+          <label for="idea">Describe tu idea con más detalle</label>
+          <textarea id="idea" name="idea" rows="5" placeholder="Ej: Quiero un amigurumi de mi perrita Luna, raza poodle, color crema, con un lazo rosa..."></textarea>
+
+          <label for="imagenes">Sube imágenes de referencia (opcional)</label>
+          <div class="upload-area" id="uploadArea">
+            <input type="file" id="imagenes" name="imagenes" accept="image/*" multiple hidden />
+            <button type="button" class="upload-btn" id="uploadBtn">
+              <span aria-hidden="true">📷</span> Seleccionar imágenes
+            </button>
+            <p class="upload-hint">Puedes subir varias imágenes (JPG, PNG, WEBP).</p>
+            <div class="upload-preview" id="uploadPreview"></div>
+          </div>
+
+          <button type="submit" class="btn-whatsapp">
+            <span aria-hidden="true">💬</span> Cotizar y Pedir por WhatsApp
+          </button>
+          <p class="form-note">Te responderemos en menos de 24 horas hábiles.</p>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="site-footer">
+    <div class="container footer-grid">
+      <div>
+        <h4>Patitas de Lana</h4>
+        <p>Amigurumis tejidos a mano con amor en Chile.</p>
+        <div class="socials">
+          <a href="https://instagram.com" target="_blank" rel="noopener" aria-label="Instagram">📸 Instagram</a>
+          <a href="https://facebook.com" target="_blank" rel="noopener" aria-label="Facebook">👍 Facebook</a>
+          <a href="https://tiktok.com" target="_blank" rel="noopener" aria-label="TikTok">🎵 TikTok</a>
+        </div>
+      </div>
+      <div>
+        <h4>Contacto</h4>
+        <p>📧 hola@patitasdelana.cl</p>
+        <p>📱 +56 9 1234 5678</p>
+        <p>📍 Santiago, Chile</p>
+      </div>
+      <div>
+        <h4>Medios de pago</h4>
+        <ul class="pay-list">
+          <li>💳 Webpay Plus</li>
+          <li>🏦 Redcompra (Débito)</li>
+          <li>💳 Crédito Transbank</li>
+          <li>🟦 Mercado Pago</li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© <span id="year"></span> Patitas de Lana · Hecho con 🧶 en Chile</p>
+    </div>
+  </footer>
+
+  <!-- ===== CARRITO (DRAWER) ===== -->
+  <aside class="cart-drawer" id="cartDrawer" aria-hidden="true" aria-label="Carrito de compras">
+    <div class="cart-header">
+      <h3>Tu carrito 🛒</h3>
+      <button class="cart-close" id="cartClose" aria-label="Cerrar carrito">✕</button>
+    </div>
+    <div class="cart-items" id="cartItems"></div>
+    <div class="cart-footer">
+      <div class="cart-total-row">
+        <span>Total</span>
+        <strong id="cartTotal">CLP $0</strong>
+      </div>
+      <button class="btn-checkout" id="checkoutBtn">Pagar con Webpay / Transbank</button>
+      <p class="cart-note">Pago seguro · Redcompra · Crédito · Mercado Pago</p>
+    </div>
+  </aside>
+  <div class="overlay" id="overlay" hidden></div>
+
+  <!-- ===== MODAL DE PAGO ===== -->
+  <div class="modal" id="paymentModal" role="dialog" aria-modal="true" aria-labelledby="paymentTitle" hidden>
+    <div class="modal-card">
+      <button class="modal-close" id="paymentClose" aria-label="Cerrar">✕</button>
+      <h3 id="paymentTitle">Menú de pago</h3>
+      <p class="modal-sub">Simulación de pago seguro para el mercado chileno.</p>
+
+      <div class="payment-methods">
+        <label class="pay-method">
+          <input type="radio" name="payMethod" value="Webpay Plus" checked />
+          <span>💳 Webpay Plus</span>
+        </label>
+        <label class="pay-method">
+          <input type="radio" name="payMethod" value="Débito Redcompra" />
+          <span>🏦 Débito Redcompra</span>
+        </label>
+        <label class="pay-method">
+          <input type="radio" name="payMethod" value="Crédito Transbank" />
+          <span>💳 Crédito Transbank</span>
+        </label>
+        <label class="pay-method">
+          <input type="radio" name="payMethod" value="Mercado Pago" />
+          <span>🟦 Mercado Pago</span>
+        </label>
+      </div>
+
+      <div class="payment-summary">
+        <span>Monto a pagar</span>
+        <strong id="paymentAmount">CLP $0</strong>
+      </div>
+
+      <button class="btn-pay" id="confirmPay">Confirmar pago</button>
+      <p class="modal-note">🔒 Esta es una simulación. No se realizará ningún cargo real.</p>
+    </div>
+  </div>
+
+  <!-- ===== TOAST ===== -->
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="es-CL">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Patitas de Lana · Amigurumis hechos a mano en Chile</title>
+  <meta name="description" content="Amigurumis tejidos a crochet con amor en Chile. Catálogo en stock y encargos personalizados." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;500;600;700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="css/catalog.css" />
+  <link rel="stylesheet" href="css/admin.css" />
+</head>
+<body>
+
+  <div class="announcement-bar" aria-hidden="true">
+    <div class="announcement-content">
+      ✨ Envíos a todo Chile 🚚 • Amigurumis 100% hechos a mano 🧶 • Calidad y cariño en cada puntada ✨
+    </div>
+  </div>
+
+  <!-- ===== HEADER ===== -->
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="#inicio" class="brand" aria-label="Patitas de Lana, inicio">
+        <span class="brand-emoji" aria-hidden="true">🧶</span>
+        <span class="brand-text">
+          <strong>Patitas de Lana</strong>
+          <small>Amigurumis hechos a mano</small>
+        </span>
+      </a>
+
+      <nav class="main-nav" aria-label="Navegación principal">
+        <a href="index.html" class="active">Inicio</a>
+        <a href="papeleria.html">Papelería</a>
+        <a href="nosotros.html">Nosotros</a>
+        <a href="contacto.html">Contacto</a>
+      </nav>
+
+      <button class="cart-toggle" id="cartToggle" aria-label="Abrir carrito de compras">
+        <span aria-hidden="true">🛒</span>
+        <span class="cart-count" id="cartCount">0</span>
+      </button>
+
+      <button class="nav-toggle" id="navToggle" aria-label="Abrir menú" aria-expanded="false" aria-controls="mobileNav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+
+    <nav class="mobile-nav" id="mobileNav" aria-label="Navegación móvil">
+      <a href="index.html" class="active">Inicio</a>
+      <a href="papeleria.html">Papelería</a>
+      <a href="nosotros.html">Nosotros</a>
+      <a href="contacto.html">Contacto</a>
+    </nav>
+  </header>
+
+  <!-- ===== MODO DE COMPRA ===== -->
+  <section class="section mode-section" id="inicio">
+    <div class="container">
+      <header class="section-head">
+        <h2>Elige tu <span class="highlight">Modo de Compra</span></h2>
+        <p>
+          Cada puntada está hecha a mano. Selecciona cómo quieres llevarte tu
+          amigurumi: listo para envío o creado especialmente para ti.
+        </p>
+      </header>
+
+      <div class="mode-selector" role="radiogroup" aria-label="Selecciona tu modo de compra">
+        <button class="mode-card" data-mode="stock" role="radio" aria-checked="false" tabindex="0">
+          <span class="mode-glow" aria-hidden="true"></span>
+          <span class="mode-icon" aria-hidden="true">🧸</span>
+          <span class="mode-title">Catálogo en Stock</span>
+          <span class="mode-desc">Amigurumis listos para envío inmediato a todo Chile.</span>
+          <span class="mode-badge">Envío en 24–48 h</span>
+          <span class="mode-check" aria-hidden="true">✓</span>
+        </button>
+
+        <button class="mode-card" data-mode="custom" role="radio" aria-checked="false" tabindex="0">
+          <span class="mode-glow" aria-hidden="true"></span>
+          <span class="mode-icon" aria-hidden="true">✨</span>
+          <span class="mode-title">Amigurumi Personalizado</span>
+          <span class="mode-desc">Encargos a medida: mascotas, personajes y más.</span>
+          <span class="mode-badge">Hecho para ti</span>
+          <span class="mode-check" aria-hidden="true">✓</span>
+        </button>
+      </div>
+
+      <p class="mode-hint" id="modeHint">Toca una tarjeta para comenzar ✨</p>
+
+      <p class="hero-sub" style="text-align: center; margin-top: 2rem;">
+        Piezas únicas tejidas con cariño. Elige entre nuestro catálogo en
+        stock o encarga un amigurumi personalizado.
+      </p>
+    </div>
+  </section>
+
+  <!-- ===== CARRITO (DRAWER) ===== -->
+  <aside class="cart-drawer" id="cartDrawer" aria-hidden="true" aria-label="Carrito de compras">
+    <div class="cart-header">
+      <h3>Tu carrito 🛒</h3>
+      <button class="cart-close" id="cartClose" aria-label="Cerrar carrito">✕</button>
+    </div>
+    <div class="cart-items" id="cartItems"></div>
+    <div class="cart-footer">
+      <div class="cart-total-row">
+        <span>Total</span>
+        <strong id="cartTotal">CLP $0</strong>
+      </div>
+      <button class="btn-checkout" id="checkoutBtn">Pagar con Webpay / Transbank</button>
+      <p class="cart-note">Pago seguro · Redcompra · Crédito · Mercado Pago</p>
+    </div>
+  </aside>
+  <div class="overlay" id="overlay" hidden></div>
+
+  <!-- ===== MODAL DE PAGO ===== -->
+  <div class="modal" id="paymentModal" role="dialog" aria-modal="true" aria-labelledby="paymentTitle" hidden>
+    <div class="modal-card">
+      <button class="modal-close" id="paymentClose" aria-label="Cerrar">✕</button>
+      <h3 id="paymentTitle">Menú de pago</h3>
+      <p class="modal-sub">Simulación de pago seguro para el mercado chileno.</p>
+
+      <div class="payment-methods">
+        <label class="pay-method">
+          <input type="radio" name="payMethod" value="Webpay Plus" checked />
+          <span>💳 Webpay Plus</span>
+        </label>
+        <label class="pay-method">
+          <input type="radio" name="payMethod" value="Débito Redcompra" />
+          <span>🏦 Débito Redcompra</span>
+        </label>
+        <label class="pay-method">
+          <input type="radio" name="payMethod" value="Crédito Transbank" />
+          <span>💳 Crédito Transbank</span>
+        </label>
+        <label class="pay-method">
+          <input type="radio" name="payMethod" value="Mercado Pago" />
+          <span>🟦 Mercado Pago</span>
+        </label>
+      </div>
+
+      <div class="payment-summary">
+        <span>Monto a pagar</span>
+        <strong id="paymentAmount">CLP $0</strong>
+      </div>
+
+      <button class="btn-pay" id="confirmPay">Confirmar pago</button>
+      <p class="modal-note">🔒 Esta es una simulación. No se realizará ningún cargo real.</p>
+    </div>
+  </div>
+
+  <!-- ===== TOAST ===== -->
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <!-- Acceso discreto al panel de administración -->
+  <a href="#admin" data-open-admin class="admin-access" aria-label="Acceso administrador">⚙️</a>
+
+  <script src="script.js"></script>
+  <script type="module" src="js/catalog.js"></script>
+  <script type="module" src="js/admin.js"></script>
+</body>
+</html>

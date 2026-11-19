@@ -1,5 +1,14 @@
 import { fetchProducts } from './supabase.js';
 
+function escapeHtml(value = '') {
+  return String(value)
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#39;');
+}
+
 document.addEventListener('DOMContentLoaded', async () => {
   const catalogGrid = document.getElementById('catalogGrid');
   const yearSpan = document.getElementById('year');
@@ -10,7 +19,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   if (!catalogGrid) return;
 
-  // Estado de carga inicial
   catalogGrid.innerHTML = '<p class="catalog-loading">Cargando catálogo en stock... 🧶</p>';
 
   try {
@@ -22,35 +30,38 @@ document.addEventListener('DOMContentLoaded', async () => {
       return;
     }
 
-    // Registra los productos para que el carrito (script.js) los resuelva por id
     if (typeof window.registerProducts === 'function') {
       window.registerProducts(productos);
     }
 
-    // Renderizado de Product Cards (usando las llaves exactas: name, desc_text, price, emoji, stock)
     catalogGrid.innerHTML = productos.map((prod) => {
       const stock = Number(prod.stock ?? 0);
       const disabled = stock <= 0 ? 'disabled' : '';
-      const precioFormateado = prod.price
-        ? `CLP $${Number(prod.price).toLocaleString('es-CL', { maximumFractionDigits: 0 })}`
+      const precioNum = Number(prod.price);
+      const precioFormateado = Number.isFinite(precioNum) && precioNum > 0
+        ? `CLP $${precioNum.toLocaleString('es-CL', { maximumFractionDigits: 0 })}`
         : 'Consultar precio';
 
       const imageUrl = prod.image_url ? String(prod.image_url).trim() : '';
-      const media = imageUrl
-        ? `<img src="${imageUrl}" alt="${prod.name || 'Producto'}" loading="lazy" />`
-        : `<span class="catalog-card-emoji">${prod.emoji || '🧸'}</span>`;
+      const safeName = escapeHtml(prod.name || 'Sin nombre');
+      const safeDesc = escapeHtml(prod.desc_text || 'Pieza única hecha a mano con amor.');
+      const safeEmoji = escapeHtml(prod.emoji || '🧸');
+      const safeId = escapeHtml(prod.id ?? '');
 
-      const descripcion = prod.desc_text || 'Pieza única hecha a mano con amor.';
+      const media = imageUrl
+        ? `<img src="${escapeHtml(imageUrl)}" alt="${safeName}" loading="lazy" />`
+        : `<span class="catalog-card-emoji">${safeEmoji}</span>`;
+
       const ctaLabel = stock > 0 ? 'Añadir al Carrito' : 'Sin stock';
 
       return `
         <article class="catalog-card">
           <div class="catalog-card-media">${media}</div>
           <div class="catalog-card-body">
-            <h3 class="catalog-card-title">${prod.name || 'Sin nombre'}</h3>
-            <p class="catalog-card-desc">${descripcion}</p>
-            <span class="catalog-card-price">${precioFormateado}</span>
-            <button class="catalog-card-cta" type="button" ${disabled} data-add="${prod.id}">
+            <h3 class="catalog-card-title">${safeName}</h3>
+            <p class="catalog-card-desc">${safeDesc}</p>
+            <span class="catalog-card-price">${escapeHtml(precioFormateado)}</span>
+            <button class="catalog-card-cta" type="button" ${disabled} data-add="${safeId}">
               ${ctaLabel}
             </button>
           </div>

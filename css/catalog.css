@@ -4,7 +4,11 @@
 
 /* ---------- Hero ---------- */
 .catalog-hero {
-  background: linear-gradient(135deg, var(--rosa-claro), var(--crema));
+  /* Degradado simétrico: mismo tono en PC y móvil, sin depender de la forma del bloque. */
+  background: linear-gradient(to right,
+    var(--rosa-claro) 0%,
+    var(--crema) 50%,
+    var(--rosa-claro) 100%);
   padding: 3.5rem 0 3rem;
   text-align: center;
   border-bottom: 1px solid var(--lana-gris);
@@ -24,6 +28,7 @@
   text-transform: uppercase;
   color: var(--rosa-fuerte);
   margin: 0;
+  font-family: var(--fuente-emoji), 'Nunito', sans-serif;
 }
 
 .catalog-hero h1 {
@@ -48,10 +53,16 @@
   display: block;
 }
 
+
+
+
+
+
+
 .catalog-product-grid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 1.5rem;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 1.25rem;
   width: 100%;
   min-height: 1px;
 }
@@ -77,25 +88,23 @@
 .catalog-card-media {
   aspect-ratio: 1 / 1;
   width: 100%;
-  background: linear-gradient(135deg, var(--rosa-claro), var(--crema));
+  background: linear-gradient(to right,
+    var(--rosa-claro) 0%,
+    var(--crema) 50%,
+    var(--rosa-claro) 100%);
   display: grid;
   place-items: center;
   overflow: hidden;
 }
 
 .catalog-card-media img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-}
-
 .catalog-card-emoji {
   font-size: 4rem;
   line-height: 1;
   user-select: none;
+  font-family: var(--fuente-emoji);
+  overflow-wrap: anywhere;
 }
-
 .catalog-card-body {
   padding: 1rem 1.1rem 1.2rem;
   display: flex;
@@ -114,23 +123,6 @@
   overflow-wrap: anywhere;
 }
 
-.catalog-card-desc {
-  font-size: 0.85rem;
-  color: var(--texto-suave);
-  line-height: 1.5;
-  margin: 0;
-  flex: 1;
-  overflow-wrap: anywhere;
-}
-
-.catalog-card-price {
-  font-family: 'Baloo 2', sans-serif;
-  font-size: 1.25rem;
-  font-weight: 800;
-  color: var(--rosa-fuerte);
-  text-align: left;
-  overflow-wrap: anywhere;
-}
 
 .catalog-card-cta {
   width: 100%;

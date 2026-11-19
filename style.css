@@ -1,4 +1,5 @@
 /* =========================================================
+ac
    Patitas de Lana · Estilos
    Paleta pastel: #FFE4E1, #FFB6C1, #FF69B4, #FFFFFF, #FFFDD0
    ========================================================= */
@@ -13,11 +14,18 @@
   --texto: #4A3F44;
   --texto-suave: #8A7B82;
   --sombra: 0 10px 30px rgba(232, 154, 174, 0.15);
-  --sombra-fuerte: 0 18px 45px rgba(232, 154, 174, 0.28);
+    --sombra-fuerte: 0 18px 45px rgba(232, 154, 174, 0.28);
   --radio: 28px;
   --radio-boton: 999px;
   --transicion: 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  /* Familia de emojis unificada: evita que cada SO dibuje los emojis distinto
+     (p. ej. Android con contorno negro). Se aplica en todos los elementos con emoji. */
+  --fuente-emoji: 'Noto Color Emoji', 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', sans-serif;
 }
+
+/* Fuente de emojis consistente en todos los dispositivos.
+   Evita que Android/iOS dibujen los emojis con contorno oscuro distinto al de PC. */
+@import url('https://fonts.googleapis.com/css2?family=Noto+Color+Emoji&display=swap');
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -31,6 +39,7 @@ body {
     radial-gradient(circle at 90% 10%, var(--crema) 0%, transparent 40%),
     radial-gradient(circle at 50% 100%, var(--lana-gris) 0%, transparent 55%),
     var(--blanco);
+  background-attachment: fixed;
   line-height: 1.6;
   min-height: 100vh;
   display: flex;
@@ -131,7 +140,8 @@ svg {
   color: inherit;
 }
 
-.brand-emoji { font-size: 1.8rem; }
+
+.brand-emoji { font-size: 1.8rem; font-family: var(--fuente-emoji); }
 
 .brand-text { display: flex; flex-direction: column; }
 .brand-text strong { font-size: 1.15rem; }
@@ -351,7 +361,7 @@ svg {
 .mode-card:hover .mode-glow,
 .mode-card:focus-visible .mode-glow { opacity: 1; }
 
-.mode-icon { font-size: 2.6rem; }
+.mode-icon { font-size: 2.6rem; font-family: var(--fuente-emoji); }
 
 .mode-title {
   font-family: 'Baloo 2', sans-serif;
@@ -446,17 +456,18 @@ svg {
   border: 1px solid var(--lana-gris);
 }
 
-.product-card:hover {
-  transform: translateY(-6px);
-  box-shadow: var(--sombra-fuerte);
-}
-
 .product-img {
   aspect-ratio: 1 / 1;
   display: grid;
   place-items: center;
   font-size: 4rem;
-  background: linear-gradient(135deg, var(--rosa-claro), var(--crema));
+  font-family: var(--fuente-emoji);
+  /* Degradado simétrico (to right con parada media): el tono percibido es
+     el mismo en horizontal y vertical, no cambia entre PC y móvil. */
+  background: linear-gradient(to right,
+    var(--rosa-claro) 0%,
+    var(--crema) 50%,
+    var(--rosa-claro) 100%);
 }
 
 .product-body { padding: 1.1rem 1.2rem 1.3rem; display: flex; flex-direction: column; gap: 0.5rem; flex: 1; }
@@ -502,7 +513,8 @@ svg {
 }
 
 .option-card:hover { transform: translateY(-4px); }
-.option-icon { font-size: 1.8rem; }
+
+.option-icon { font-size: 1.8rem; font-family: var(--fuente-emoji); }
 .option-card h3 { font-size: 1.05rem; margin: 0.4rem 0; }
 .option-card p { color: var(--texto-suave); font-size: 0.85rem; }
 
@@ -709,7 +721,6 @@ svg {
   transform: translateY(-4px);
   box-shadow: var(--sombra-fuerte);
 }
-
 .contact-icon { font-size: 2rem; display: block; margin-bottom: 0.4rem; }
 .contact-card h3 { font-size: 1.1rem; margin-bottom: 0.8rem; }
 
@@ -825,10 +836,14 @@ svg {
   width: 56px;
   height: 56px;
   border-radius: 14px;
-  background: linear-gradient(135deg, var(--rosa-claro), var(--crema));
+  background: linear-gradient(to right,
+    var(--rosa-claro) 0%,
+    var(--crema) 50%,
+    var(--rosa-claro) 100%);
   display: grid;
   place-items: center;
   font-size: 1.6rem;
+  font-family: var(--fuente-emoji);
 }
 
 .cart-item-info h4 { font-size: 0.95rem; }
