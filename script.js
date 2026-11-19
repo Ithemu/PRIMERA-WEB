@@ -458,7 +458,3 @@ if ($('#catalogGrid')) {
   fetchProducts();
 }
 
-/* Asegura que la página siempre inicie en "Inicio" */
-if (window.location.hash) {
-  history.replaceState(null, '', window.location.pathname);
-}

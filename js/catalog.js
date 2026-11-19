@@ -93,11 +93,19 @@ async function loadCatalog() {
   renderGrid();
 
   try {
-    state.products = await fetchProducts();
-    if (typeof window.registerProducts === 'function') {
-      window.registerProducts(state.products);
+    const data = await fetchProducts();
+    console.log('[catalog] productos recibidos de Supabase:', data);
+    if (!Array.isArray(data)) {
+      state.error = 'La consulta a Supabase no devolvió una lista válida. Revisa la tabla "productos" y las políticas RLS.';
+      state.products = [];
+    } else {
+      state.products = data;
+      if (typeof window.registerProducts === 'function') {
+        window.registerProducts(state.products);
+      }
     }
   } catch (err) {
+    console.error('[catalog] error al cargar productos:', err);
     const msg = err?.message || 'Error desconocido';
     state.error = /failed to fetch/i.test(msg)
       ? 'No se pudo conectar con el servidor. Verifica tu conexión o que el sitio se esté sirviendo por HTTP (no file://).'
