@@ -2,7 +2,7 @@
    Catálogo en Stock · Vista de página (Hero + Grid)
    ========================================================= */
 
-/* ---------- Hero (compartido con otras páginas) ---------- */
+/* ---------- Hero ---------- */
 .catalog-hero {
   background: linear-gradient(135deg, var(--rosa-claro), var(--crema));
   padding: 3.5rem 0 3rem;
@@ -23,6 +23,7 @@
   letter-spacing: 1.5px;
   text-transform: uppercase;
   color: var(--rosa-fuerte);
+  margin: 0;
 }
 
 .catalog-hero h1 {
@@ -30,6 +31,7 @@
   font-size: clamp(2rem, 4vw, 3rem);
   color: var(--texto);
   margin: 0;
+  line-height: 1.15;
 }
 
 .catalog-hero-sub {
@@ -37,6 +39,7 @@
   color: var(--texto-suave);
   font-size: 1rem;
   line-height: 1.6;
+  margin: 0;
 }
 
 /* ---------- Grid de productos ---------- */
@@ -46,7 +49,7 @@
 
 .catalog-product-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 1.5rem;
 }
 
@@ -57,6 +60,7 @@
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  min-width: 0;
   box-shadow: var(--sombra);
   border: 1px solid var(--lana-gris);
   transition: transform var(--transicion), box-shadow var(--transicion);
@@ -69,6 +73,7 @@
 
 .catalog-card-media {
   aspect-ratio: 1 / 1;
+  width: 100%;
   background: linear-gradient(135deg, var(--rosa-claro), var(--crema));
   display: grid;
   place-items: center;
@@ -79,11 +84,13 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+  display: block;
 }
 
 .catalog-card-emoji {
   font-size: 4rem;
   line-height: 1;
+  user-select: none;
 }
 
 .catalog-card-body {
@@ -92,6 +99,7 @@
   flex-direction: column;
   gap: 0.5rem;
   flex: 1;
+  min-width: 0;
 }
 
 .catalog-card-title {
@@ -100,6 +108,7 @@
   font-weight: 700;
   color: var(--texto);
   margin: 0;
+  overflow-wrap: anywhere;
 }
 
 .catalog-card-desc {
@@ -108,6 +117,7 @@
   line-height: 1.5;
   margin: 0;
   flex: 1;
+  overflow-wrap: anywhere;
 }
 
 .catalog-card-price {
@@ -116,9 +126,11 @@
   font-weight: 800;
   color: var(--rosa-fuerte);
   text-align: left;
+  overflow-wrap: anywhere;
 }
 
 .catalog-card-cta {
+  width: 100%;
   border: none;
   background: var(--rosa-medio);
   color: var(--texto);
@@ -143,27 +155,39 @@
   cursor: not-allowed;
 }
 
-/* ---------- Estados ---------- */
-.catalog-status {
+/* ---------- Estados (carga, vacío, error) ---------- */
+.catalog-status,
+.catalog-loading,
+.catalog-empty,
+.catalog-error {
   grid-column: 1 / -1;
   text-align: center;
-  color: var(--texto-suave);
   padding: 2rem 0;
 }
 
-.catalog-error { color: #B71C1C; }
+.catalog-status,
+.catalog-loading {
+  color: var(--texto-suave);
+}
+
+.catalog-error {
+  color: #b71c1c;
+  font-weight: 700;
+}
 
 .catalog-empty {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
   align-items: center;
+  color: var(--texto-suave);
 }
 
 .catalog-empty-hint {
   font-size: 0.85rem;
   color: var(--texto-suave);
   max-width: 520px;
+  margin: 0;
 }
 
 .catalog-empty-hint code {
@@ -176,15 +200,16 @@
 /* ---------- Responsive ---------- */
 @media (max-width: 1024px) {
   .catalog-product-grid {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
 
 @media (max-width: 780px) {
   .catalog-product-grid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 1rem;
   }
+
   .catalog-hero {
     padding: 2.5rem 0 2rem;
   }
