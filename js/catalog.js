@@ -1,4 +1,4 @@
-import { supabase } from './supabaseClient.js'; // Ajusta la ruta a tu cliente de Supabase si varía
+import { fetchProducts } from './supabase.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
   const catalogGrid = document.getElementById('catalogGrid');
@@ -14,48 +14,57 @@ document.addEventListener('DOMContentLoaded', async () => {
   catalogGrid.innerHTML = '<p class="catalog-loading">Cargando catálogo en stock... 🧶</p>';
 
   try {
-    const { data: productos, error } = await supabase
-      .from('productos') // Asegúrate de que este es el nombre de tu tabla
-      .select('*');
-
-    if (error) {
-      console.error('Error cargando productos de Supabase:', error);
-      catalogGrid.innerHTML = '<p class="catalog-error">Ocurrió un error al cargar el catálogo.</p>';
-      return;
-    }
-
+    const productos = await fetchProducts();
     console.log('[catalog] productos recibidos de Supabase:', productos);
 
-    if (!productos || productos.length === 0) {
+    if (!Array.isArray(productos) || productos.length === 0) {
       catalogGrid.innerHTML = '<p class="catalog-empty">No hay amigurumis disponibles en este momento.</p>';
       return;
     }
 
-    // Renderizado de Product Cards (usando las llaves exactas: name, desc_text, price, emoji)
-    catalogGrid.innerHTML = productos.map(prod => {
-      const precioFormateado = prod.price 
-        ? `CLP $${Number(prod.price).toLocaleString('es-CL')}` 
+    // Registra los productos para que el carrito (script.js) los resuelva por id
+    if (typeof window.registerProducts === 'function') {
+      window.registerProducts(productos);
+    }
+
+    // Renderizado de Product Cards (usando las llaves exactas: name, desc_text, price, emoji, stock)
+    catalogGrid.innerHTML = productos.map((prod) => {
+      const stock = Number(prod.stock ?? 0);
+      const disabled = stock <= 0 ? 'disabled' : '';
+      const precioFormateado = prod.price
+        ? `CLP $${Number(prod.price).toLocaleString('es-CL', { maximumFractionDigits: 0 })}`
         : 'Consultar precio';
 
-      const icono = prod.emoji || '🧸';
+      const imageUrl = prod.image_url ? String(prod.image_url).trim() : '';
+      const media = imageUrl
+        ? `<img src="${imageUrl}" alt="${prod.name || 'Producto'}" loading="lazy" />`
+        : `<span class="catalog-card-emoji">${prod.emoji || '🧸'}</span>`;
+
       const descripcion = prod.desc_text || 'Pieza única hecha a mano con amor.';
+      const ctaLabel = stock > 0 ? 'Añadir al Carrito' : 'Sin stock';
 
       return `
-        <article class="product-card">
-          <div class="product-card-media">
-            <span class="product-emoji">${icono}</span>
-          </div>
-          <div class="product-card-body">
-            <h3 class="product-title">${prod.name}</h3>
-            <p class="product-desc">${descripcion}</p>
-            <div class="product-price">${precioFormateado}</div>
-            <button class="btn-add-cart" data-id="${prod.id}" data-name="${prod.name}" data-price="${prod.price || 0}">
-              Añadir al Carrito
+        <article class="catalog-card">
+          <div class="catalog-card-media">${media}</div>
+          <div class="catalog-card-body">
+            <h3 class="catalog-card-title">${prod.name || 'Sin nombre'}</h3>
+            <p class="catalog-card-desc">${descripcion}</p>
+            <span class="catalog-card-price">${precioFormateado}</span>
+            <button class="catalog-card-cta" type="button" ${disabled} data-add="${prod.id}">
+              ${ctaLabel}
             </button>
           </div>
         </article>
       `;
     }).join('');
+
+    catalogGrid.querySelectorAll('[data-add]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        if (typeof window.addToCart === 'function') {
+          window.addToCart(btn.dataset.add);
+        }
+      });
+    });
 
   } catch (err) {
     console.error('Error inesperado:', err);
