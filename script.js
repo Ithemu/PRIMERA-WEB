@@ -7,6 +7,43 @@ const WHATSAPP_NUMBER = '56912345678'; // Cambia por el número real de la tiend
 /* ---------- Datos de productos ---------- */
 let PRODUCTS = [];
 
+/* Productos estáticos (papelería) que no vienen de Supabase.
+   Se resuelven por id para poder añadirlos al carrito desde papeleria.html. */
+const STATIC_PRODUCTS = {
+  'papeleria-cuaderno': {
+    id: 'papeleria-cuaderno',
+    name: 'Cuaderno artesanal',
+    desc: 'Encuadernado a mano con tapas decoradas.',
+    price: 8990,
+    emoji: '📓',
+    image_url: null,
+  },
+  'papeleria-agenda': {
+    id: 'papeleria-agenda',
+    name: 'Agenda 2026',
+    desc: 'Agenda semanal con ilustraciones originales.',
+    price: 12990,
+    emoji: '📔',
+    image_url: null,
+  },
+  'papeleria-tarjetas': {
+    id: 'papeleria-tarjetas',
+    name: 'Set de tarjetas',
+    desc: 'Tarjetas con diseños tejidos y sobres kraft.',
+    price: 4990,
+    emoji: '✉️',
+    image_url: null,
+  },
+  'papeleria-marcapaginas': {
+    id: 'papeleria-marcapaginas',
+    name: 'Marcapáginas',
+    desc: 'Marcapáginas tejidos a crochet, varios colores.',
+    price: 2990,
+    emoji: '🔖',
+    image_url: null,
+  },
+};
+
 /* Productos dinámicos (Supabase) registrados desde js/catalog.js */
 const dynamicProducts = new Map();
 
@@ -28,7 +65,11 @@ function registerProducts(list) {
 
 function findProduct(id) {
   const key = String(id);
-  return dynamicProducts.get(key) || PRODUCTS.find((p) => String(p.id) === key);
+  return (
+    dynamicProducts.get(key) ||
+    STATIC_PRODUCTS[key] ||
+    PRODUCTS.find((p) => String(p.id) === key)
+  );
 }
 
 window.registerProducts = registerProducts;
@@ -183,6 +224,14 @@ document.addEventListener('click', (e) => {
   if (action === 'inc') changeQty(id, 1);
   if (action === 'dec') changeQty(id, -1);
   if (action === 'remove') removeFromCart(id);
+});
+
+/* Delegación para botones "Añadir al Carrito" de productos estáticos (papelería) */
+document.addEventListener('click', (e) => {
+  const addBtn = e.target.closest('.btn-add[data-id]');
+  if (!addBtn) return;
+  e.preventDefault();
+  addToCart(addBtn.dataset.id);
 });
 
 /* ---------- Drawer del carrito ---------- */
