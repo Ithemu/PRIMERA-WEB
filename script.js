@@ -10,13 +10,14 @@ let PRODUCTS = [];
 /* Productos estáticos (papelería) que no vienen de Supabase.
    Se resuelven por id para poder añadirlos al carrito desde papeleria.html. */
 const STATIC_PRODUCTS = {
-  'papeleria-cuaderno': {
+    'papeleria-cuaderno': {
     id: 'papeleria-cuaderno',
     name: 'Cuaderno artesanal',
     desc: 'Encuadernado a mano con tapas decoradas.',
     price: 8990,
     emoji: '📓',
     image_url: null,
+    stock: 10,
   },
   'papeleria-agenda': {
     id: 'papeleria-agenda',
@@ -25,6 +26,7 @@ const STATIC_PRODUCTS = {
     price: 12990,
     emoji: '📔',
     image_url: null,
+    stock: 2,
   },
   'papeleria-tarjetas': {
     id: 'papeleria-tarjetas',
@@ -33,6 +35,7 @@ const STATIC_PRODUCTS = {
     price: 4990,
     emoji: '✉️',
     image_url: null,
+    stock: 0,
   },
   'papeleria-marcapaginas': {
     id: 'papeleria-marcapaginas',
@@ -41,6 +44,7 @@ const STATIC_PRODUCTS = {
     price: 2990,
     emoji: '🔖',
     image_url: null,
+    stock: 15,
   },
 };
 
@@ -135,6 +139,19 @@ function addToCart(id) {
 
   const key = String(product.id);
   const existing = cart.find((item) => String(item.id) === key);
+  const currentQty = existing ? existing.qty : 0;
+
+  // Respeta el stock disponible (undefined = sin límite)
+  const maxStock = Number.isFinite(product.stock) ? Number(product.stock) : Infinity;
+  if (maxStock <= 0) {
+    showToast(`😢 ${product.name} está agotado`);
+    return;
+  }
+  if (currentQty >= maxStock) {
+    showToast(`Solo quedan ${maxStock} ${maxStock === 1 ? 'unidad' : 'unidades'} de ${product.name}`);
+    return;
+  }
+
   if (existing) {
     existing.qty += 1;
   } else {
@@ -144,6 +161,7 @@ function addToCart(id) {
       price: product.price,
       emoji: product.emoji,
       image_url: product.image_url || null,
+      stock: Number.isFinite(product.stock) ? Number(product.stock) : null,
       qty: 1,
     });
   }
@@ -166,6 +184,13 @@ function changeQty(id, delta) {
   const key = String(id);
   const item = cart.find((i) => String(i.id) === key);
   if (!item) return;
+
+  // Al incrementar, no superar el stock disponible
+  if (delta > 0 && Number.isFinite(item.stock) && item.qty >= item.stock) {
+    showToast(`Solo quedan ${item.stock} ${item.stock === 1 ? 'unidad' : 'unidades'} de ${item.name}`);
+    return;
+  }
+
   item.qty += delta;
   if (item.qty <= 0) {
     removeFromCart(id);
@@ -496,10 +521,58 @@ if (navToggle && mobileNav) {
 const yearEl = $('#year');
 if (yearEl) yearEl.textContent = new Date().getFullYear();
 
+/* ---------- Decorar tarjetas estáticas de papelería ----------
+   Aplica el mismo estándar que el catálogo: etiqueta de stock y overlay
+   "AGOTADO" sobre la imagen, y deshabilita el botón si no hay stock. */
+function decoratePapeleriaCards() {
+  const cards = $$('.product-card');
+  cards.forEach((card) => {
+    const btn = card.querySelector('.btn-add[data-id]');
+    if (!btn) return;
+    const product = findProduct(btn.dataset.id);
+    if (!product) return;
+
+    const stock = Number.isFinite(Number(product.stock)) ? Number(product.stock) : null;
+    const agotado = stock !== null && stock <= 0;
+
+    // Overlay AGOTADO sobre la imagen
+    const img = card.querySelector('.product-img');
+    if (img && agotado && !img.querySelector('.catalog-card-soldout')) {
+      const overlayEl = document.createElement('div');
+      overlayEl.className = 'catalog-card-soldout';
+      overlayEl.setAttribute('aria-hidden', 'true');
+      overlayEl.innerHTML = '<span>AGOTADO</span>';
+      img.appendChild(overlayEl);
+      img.classList.add('is-soldout');
+    }
+
+    // Etiqueta de stock (antes del botón)
+    if (stock !== null && !card.querySelector('.product-stock')) {
+      const badge = document.createElement('span');
+      badge.className = 'product-stock' + (agotado ? ' out' : (stock <= 3 ? ' low' : ''));
+      if (agotado) {
+        badge.textContent = 'Agotado';
+      } else if (stock <= 3) {
+        badge.textContent = `¡Últimas ${stock} ${stock === 1 ? 'unidad' : 'unidades'}!`;
+      } else {
+        badge.textContent = `Disponible: ${stock}`;
+      }
+      btn.parentNode.insertBefore(badge, btn);
+    }
+
+    // Deshabilitar el botón si está agotado
+    if (agotado) {
+      btn.disabled = true;
+      btn.textContent = 'Sin stock';
+    }
+  });
+}
+
 /* ---------- Init ---------- */
 renderCart();
 closePayment();
 closeCart();
+decoratePapeleriaCards();
 
 /* El catálogo en stock (js/catalog.js) ya carga los productos desde Supabase
    y los registra vía window.registerProducts para que el carrito los resuelva.

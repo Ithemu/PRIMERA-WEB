@@ -1,5 +1,4 @@
 /* =========================================================
-ac
    Patitas de Lana · Estilos
    Paleta pastel: #FFE4E1, #FFB6C1, #FF69B4, #FFFFFF, #FFFDD0
    ========================================================= */
@@ -458,6 +457,7 @@ svg {
 
 .product-img {
   aspect-ratio: 1 / 1;
+  position: relative;
   display: grid;
   place-items: center;
   font-size: 4rem;
@@ -470,11 +470,17 @@ svg {
     var(--rosa-claro) 100%);
 }
 
-.product-body { padding: 1.1rem 1.2rem 1.3rem; display: flex; flex-direction: column; gap: 0.5rem; flex: 1; }
-.product-name { font-size: 1.1rem; }
-.product-desc { color: var(--texto-suave); font-size: 0.85rem; flex: 1; }
-.product-price { font-weight: 800; color: var(--rosa-fuerte); font-size: 1.15rem; }
+.product-body { padding: 1.1rem 1.2rem 1.3rem; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 0.45rem; flex: 1; }
+.product-name { font-size: 1rem; }
+.product-desc { color: var(--texto-suave); font-size: 0.8rem; flex: 1; }
+.product-price { font-weight: 800; color: var(--rosa-fuerte); font-size: 1rem; }
+.product-stock { font-size: 0.72rem; font-weight: 800; padding: 0.2rem 0.65rem; border-radius: 999px; background: #E8F5E9; color: #2E7D32; }
+.product-stock.low { background: #FFEBEE; color: #B71C1C; }
+.product-stock.out { background: #FFEBEE; color: #B71C1C; }
 
+.product-img.is-soldout {
+  opacity: 0.5;
+}
 .btn-add {
   border: none;
   background: var(--rosa-medio);
