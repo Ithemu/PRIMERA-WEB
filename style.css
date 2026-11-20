@@ -79,7 +79,7 @@ svg {
 /* ===== MARQUESINA ===== */
 .announcement-bar {
   background: linear-gradient(90deg, var(--rosa-fuerte), var(--rosa-medio));
-  color: var(--blanco);
+  color: #000000;
   padding: 0.4rem 0;
   overflow: hidden;
   white-space: nowrap;
@@ -140,7 +140,8 @@ svg {
 }
 
 
-.brand-emoji { font-size: 1.8rem; font-family: var(--fuente-emoji); }
+.brand-emoji { font-size: 1.8rem; font-family: var(--fuente-emoji); display: inline-flex; align-items: center; line-height: 1; }
+.brand-emoji .brand-yarn { width: 1em; height: 1em; display: block; }
 
 .brand-text { display: flex; flex-direction: column; }
 .brand-text strong { font-size: 1.15rem; }
