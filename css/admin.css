@@ -224,3 +224,119 @@ body.admin-open { overflow: hidden; }
 @media (max-width: 640px) {
   .admin-form { grid-template-columns: 1fr; }
 }
+
+/* ===== Login / gate ===== */
+.admin-gate { display: block; }
+.admin-gate[hidden] { display: none; }
+.admin-login-card {
+  max-width: 420px;
+  margin: 1rem auto 2rem;
+  background: var(--blanco);
+  border: 1px solid var(--lana-gris);
+  border-radius: var(--radio);
+  box-shadow: var(--sombra);
+  padding: 1.6rem;
+}
+.admin-logout { margin-top: 0.8rem; }
+
+/* ===== Guía / instructivo ===== */
+.admin-help {
+  max-width: 760px;
+  margin: 0 auto 1.8rem;
+  background: var(--rosa-claro);
+  border: 1px solid var(--lana-gris);
+  border-radius: 14px;
+  padding: 0.9rem 1.2rem;
+}
+.admin-help summary {
+  cursor: pointer;
+  font-weight: 800;
+  color: var(--texto);
+}
+.admin-help ol {
+  margin: 0.8rem 0 0;
+  padding-left: 1.3rem;
+  display: grid;
+  gap: 0.4rem;
+  font-size: 0.9rem;
+  color: var(--texto);
+}
+
+/* ===== Fotos del producto (hasta 3) ===== */
+.admin-photos {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.admin-photos-label {
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: var(--texto-suave);
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  align-items: flex-start;
+}
+.admin-photos-hint {
+  font-size: 0.8rem;
+  color: var(--texto-suave);
+}
+.admin-photos-grid {
+  display: flex;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+.admin-photo-item {
+  position: relative;
+  width: 96px;
+  height: 96px;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 2px solid var(--rosa-claro);
+  background: var(--crema);
+}
+.admin-photo-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.admin-photo-badge {
+  position: absolute;
+  bottom: 4px;
+  left: 4px;
+  font-size: 0.62rem;
+  font-weight: 800;
+  background: var(--rosa-fuerte);
+  color: var(--blanco);
+  padding: 0.1rem 0.4rem;
+  border-radius: 999px;
+}
+.admin-photo-remove {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 22px;
+  height: 22px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(0,0,0,0.55);
+  color: #fff;
+  font-size: 0.7rem;
+  cursor: pointer;
+  line-height: 1;
+  display: grid;
+  place-items: center;
+}
+.admin-photo-remove:hover { background: #B71C1C; }
+
+.admin-form select {
+  font-family: inherit;
+  font-size: 0.95rem;
+  padding: 0.65rem 0.85rem;
+  border: 2px solid var(--rosa-claro);
+  border-radius: 12px;
+  background: var(--blanco);
+  color: var(--texto);
+}
+.admin-form select:focus { outline: none; border-color: var(--rosa-fuerte); }

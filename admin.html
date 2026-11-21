@@ -9,6 +9,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;500;600;700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="css/creadora.css" />
   <link rel="stylesheet" href="css/catalog.css" />
   <link rel="stylesheet" href="css/admin.css" />
   <style>
@@ -139,11 +140,49 @@
   <!-- ===== PANEL ADMIN ===== -->
   <main class="admin-page">
     <div class="container">
+      <!-- LOGIN (visible si no hay sesion) -->
+      <section class="admin-gate" id="adminGate">
+        <header class="admin-page-head">
+          <h1>Ingreso de Administrador</h1>
+          <p>Inicia sesión para cargar productos, fotos y precios.</p>
+        </header>
+        <div class="admin-login-card">
+          <form class="admin-login" id="loginForm">
+            <label>Correo
+              <input name="email" type="email" required placeholder="admin@patitasdelana.cl" autocomplete="username" />
+            </label>
+            <label>Contraseña
+              <span class="pw-wrap">
+                <input name="password" type="password" required placeholder="********" autocomplete="current-password" />
+                <button type="button" class="pw-toggle" id="togglePw" aria-label="Mostrar contraseña" aria-pressed="false">👁 Ver</button>
+              </span>
+            </label>
+            <button type="submit" class="admin-btn primary" id="loginBtn">Ingresar</button>
+            <p class="admin-form-msg" id="loginMsg" role="alert" hidden></p>
+          </form>
+        </div>
+      </section>
+
+      <!-- CONTENIDO (oculto hasta iniciar sesion) -->
+      <div id="adminContent" hidden>
+
       <header class="admin-page-head">
         <h1>Panel de Administración</h1>
         <p>Agrega, edita y elimina productos del catálogo en stock.</p>
+        <button type="button" class="admin-btn ghost admin-logout" id="logoutBtn">Cerrar sesión</button>
       </header>
 
+      <details class="admin-help" open>
+        <summary>📌 Guía rápida para cargar productos</summary>
+        <ol>
+          <li><strong>Foto del producto:</strong> en el campo “Subir fotos” elegí hasta 3 imágenes (JPG o PNG). La primera es la principal de la tarjeta. Se suben solas al almacenamiento.</li>
+          <li><strong>Nombre y descripción:</strong> son lo que ve el cliente en la tarjeta del catálogo.</li>
+          <li><strong>Precio:</strong> en pesos chilenos, sin puntos ni símbolos (ej: 12990).</li>
+          <li><strong>Stock:</strong> cuántas unidades hay. Si es 0, la tarjeta se muestra como “Agotado”.</li>
+          <li><strong>Categoría:</strong> elegí Stock, Personalizado o Papelería.</li>
+          <li><strong>Guardar:</strong> al terminar, click en “Guardar producto”. Para corregir uno existente, usá “Editar” en la tabla.</li>
+        </ol>
+      </details>
       <div class="admin-layout">
         <!-- Formulario -->
         <section class="admin-panel">
@@ -167,9 +206,23 @@
             <label>Emoji (si no hay imagen)
               <input name="emoji" type="text" maxlength="4" placeholder="🧸" />
             </label>
-            <label>URL de la imagen (Supabase Storage)
-              <input name="image_url" type="url" placeholder="https://..." />
+            <label>Categoría
+              <select name="category">
+                <option value="stock">Stock</option>
+                <option value="personalizado">Personalizado</option>
+                <option value="papeleria">Papelería</option>
+              </select>
             </label>
+
+            <div class="admin-photos" style="grid-column: 1 / -1;">
+              <label class="admin-photos-label">Fotos del producto (máx. 3)
+                <input id="photoInput" type="file" accept="image/*" multiple hidden />
+                <button type="button" class="admin-btn ghost" id="pickPhotosBtn">📷 Subir fotos (máx. 3)</button>
+              </label>
+              <p class="admin-photos-hint" id="photoHint">Subí hasta 3 imágenes. La primera será la principal de la tarjeta.</p>
+              <div class="admin-photos-grid" id="photoGrid"></div>
+              <input type="hidden" name="image_url" />
+            </div>
 
             <div class="admin-form-actions">
               <button type="submit" class="admin-btn primary" id="saveBtn">Guardar producto</button>
@@ -203,23 +256,28 @@
               <tr>
                 <th>ID</th>
                 <th>Nombre</th>
+                <th>Categoría</th>
                 <th>Precio</th>
                 <th>Stock</th>
+                <th>Fotos</th>
                 <th>Acciones</th>
               </tr>
             </thead>
             <tbody id="productsTableBody">
-              <tr><td colspan="5" class="admin-empty">Cargando productos…</td></tr>
+              <tr><td colspan="7" class="admin-empty">Cargando productos…</td></tr>
             </tbody>
           </table>
         </div>
       </section>
     </div>
+      </div> <!-- /adminContent -->
+
   </main>
 
   <!-- ===== TOAST ===== -->
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
   <script type="module" src="admin.js"></script>
+  <script type="module" src="js/creadora.js"></script>
 </body>
 </html>
