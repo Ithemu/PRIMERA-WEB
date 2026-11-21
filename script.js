@@ -173,11 +173,112 @@ function addToCart(id) {
 
 window.addToCart = addToCart;
 
+
+/* ---------- Personaje "enfado" al quitar un item del carrito ---------- */
+const ANGRY_SVG_URL =
+  'https://ogkqjyoiadovchobbnik.supabase.co/storage/v1/object/public/Animaciones/Animacion%20enfado/personaje-animado.svg';
+
+// ~6 cm de alto. 1cm = 37.795px aprox -> 6cm = ~227px. El ancho es proporcional.
+const ANGRY_HEIGHT_PX = Math.round(6 * 37.795); // solo para calcular posiciones (el alto visual real es 6cm)
+
+let angryTimer = null;
+let angryEl = null;
+
+function showAngryCharacter() {
+  // Evitar apilar varios: si ya hay uno, lo reemplazamos.
+  if (angryEl && angryEl.parentNode) {
+    angryEl.parentNode.removeChild(angryEl);
+    angryEl = null;
+  }
+  if (angryTimer) { clearTimeout(angryTimer); angryTimer = null; }
+
+  const img = document.createElement('img');
+  img.src = ANGRY_SVG_URL;
+  img.alt = '';
+  img.setAttribute('aria-hidden', 'true');
+  img.className = 'angry-char';
+
+  img.style.position = 'fixed';
+  img.style.height = '6cm';
+  img.style.width = 'auto';
+  img.style.zIndex = '9999';
+  img.style.pointerEvents = 'none';
+  img.style.userSelect = 'none';
+  img.style.willChange = 'transform, opacity';
+  img.style.transition = 'opacity 0.35s ease, transform 0.35s ease';
+  img.style.opacity = '0';
+
+  const vw = window.innerWidth;
+  const vh = window.innerHeight;
+  const margin = 0; // pegado al borde
+
+  // Bordes validos (NO superior): inferior, izquierdo, derecho.
+  const edges = ['bottom', 'left', 'right'];
+  const edge = edges[Math.floor(Math.random() * edges.length)];
+
+  let tx = '0', ty = '0'; // transform inicial (para animar entrada desde el borde)
+
+  if (edge === 'bottom') {
+    // Pegado al borde inferior, posicion horizontal aleatoria.
+    const maxLeft = Math.max(0, vw - ANGRY_HEIGHT_PX); // aprox ancho
+    const left = Math.random() * maxLeft;
+    img.style.left = left + 'px';
+    img.style.bottom = margin + 'px';
+    img.style.top = 'auto';
+    img.style.right = 'auto';
+    ty = '40px';
+  } else if (edge === 'left') {
+    // Pegado al borde izquierdo, posicion vertical aleatoria (evitando tapar el header).
+    const minTop = 90;
+    const maxTop = Math.max(minTop, vh - ANGRY_HEIGHT_PX);
+    const top = minTop + Math.random() * (maxTop - minTop);
+    img.style.left = margin + 'px';
+    img.style.top = top + 'px';
+    img.style.right = 'auto';
+    img.style.bottom = 'auto';
+    tx = '-40px';
+  } else { // right
+    const minTop = 90;
+    const maxTop = Math.max(minTop, vh - ANGRY_HEIGHT_PX);
+    const top = minTop + Math.random() * (maxTop - minTop);
+    img.style.right = margin + 'px';
+    img.style.top = top + 'px';
+    img.style.left = 'auto';
+    img.style.bottom = 'auto';
+    tx = '40px';
+  }
+
+  // Entrada: arranca desplazado hacia dentro del borde y aparece
+  img.style.transform = `translate(${tx}, ${ty})`;
+  document.body.appendChild(img);
+  angryEl = img;
+
+  // Forzar reflow y animar entrada
+  void img.offsetWidth;
+  img.style.opacity = '1';
+  img.style.transform = 'translate(0, 0)';
+
+  // Desvanecer y quitar tras unos segundos
+  angryTimer = setTimeout(() => {
+    if (angryEl !== img) return;
+    img.style.opacity = '0';
+    img.style.transform = `translate(${tx}, ${ty})`;
+    setTimeout(() => {
+      if (img.parentNode) img.parentNode.removeChild(img);
+      if (angryEl === img) angryEl = null;
+    }, 400);
+  }, 5200);
+}
+
 function removeFromCart(id) {
   const key = String(id);
+  const before = cart.length;
   cart = cart.filter((item) => String(item.id) !== key);
   saveCart();
   renderCart();
+  if (cart.length < before && typeof showAngryCharacter === 'function') {
+    showAngryCharacter();
+  }
 }
 
 function changeQty(id, delta) {

@@ -324,86 +324,14 @@ function showPanel(session) {
 }
 
 /* ---------- Init ---------- */
-async function init() {
+// Registra los listeners del panel UNA sola vez (idempotente).
+let panelReady = false;
+function setupPanel() {
+  if (panelReady) return;
+  panelReady = true;
+
   const form = $('#productForm');
   if (!form) return;
-
-  // ----- Login -----
-  const loginForm = $('#loginForm');
-  if (loginForm) {
-    // Mostrar / ocultar contrasena
-    const togglePw = $('#togglePw');
-    if (togglePw) {
-      togglePw.addEventListener('click', () => {
-        const input = loginForm.password;
-        const show = input.type === 'password';
-        input.type = show ? 'text' : 'password';
-        togglePw.textContent = show ? '🙈 Ocultar' : '👁 Ver';
-        togglePw.setAttribute('aria-pressed', show ? 'true' : 'false');
-        togglePw.setAttribute('aria-label', show ? 'Ocultar contraseña' : 'Mostrar contraseña');
-      });
-    }
-
-    loginForm.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const email = loginForm.email.value.trim();
-      const password = loginForm.password.value;
-      if (!email && !password) {
-        showLoginMsg('Ingresa tu correo y contraseña.');
-        return;
-      }
-      if (!email) {
-        showLoginMsg('Falta el correo electrónico.');
-        loginForm.email.focus();
-        return;
-      }
-      if (!password) {
-        showLoginMsg('Falta la contraseña.');
-        loginForm.password.focus();
-        return;
-      }
-      const btn = $('#loginBtn');
-      if (btn) { btn.disabled = true; btn.textContent = 'Ingresando…'; }
-      try {
-        await signInAdmin(email, password);
-        const session = await getSession();
-        if (!session) {
-          showLoginMsg('No se pudo iniciar sesión. Revisa tu correo y contraseña.');
-          return;
-        }
-        showLoginMsg('', 'ok');
-        showPanel(session);
-        await loadProducts();
-        renderTable();
-      } catch (err) {
-        showLoginMsg(loginErrorText(err));
-      } finally {
-        if (btn) { btn.disabled = false; btn.textContent = 'Ingresar'; }
-      }
-    });
-  }
-
-  const logoutBtn = $('#logoutBtn');
-  if (logoutBtn) {
-    logoutBtn.addEventListener('click', async () => {
-      try { await signOutAdmin(); } catch (_) {}
-      showPanel(null);
-    });
-  }
-
-  // Desloguear automaticamente al cerrar/recargar la pagina.
-  // sessionStorage ya se limpia al cerrar la pestana; esto refuerza el cierre.
-  window.addEventListener('beforeunload', () => {
-    try { signOutAdmin(); } catch (_) {}
-  });
-
-  // ----- Check sesión existente -----
-  let session = null;
-  try { session = await getSession(); } catch (_) {}
-  showPanel(session);
-
-  // Si no hay sesión, no seguir inicializando el formulario.
-  if (!session) return;
 
   // ----- Fotos -----
   const photoInput = $('#photoInput');
@@ -420,7 +348,8 @@ async function init() {
   form.addEventListener('input', updatePreview);
   form.addEventListener('change', updatePreview);
 
-  $('#cancelBtn').addEventListener('click', resetForm);
+  const cancelBtn = $('#cancelBtn');
+  if (cancelBtn) cancelBtn.addEventListener('click', resetForm);
 
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -433,7 +362,7 @@ async function init() {
       return;
     }
     if (!Number.isFinite(price) || price < 0) {
-      showFormMsg('El precio debe ser un número válido.', 'err');
+      showFormMsg('El precio debe ser un numero valido.', 'err');
       form.price.focus();
       return;
     }
@@ -443,7 +372,7 @@ async function init() {
       desc_text: form.desc.value.trim(),
       price,
       stock: Number(form.stock.value) || 0,
-      emoji: form.emoji.value.trim() || '🧸',
+      emoji: form.emoji.value.trim() || '\uD83E\uDDF8',
       category: form.category.value || 'stock',
       image_url: state.photos[0] || null,
       image_urls: state.photos.slice(0, MAX_PHOTOS),
@@ -452,14 +381,14 @@ async function init() {
     try {
       if (state.editingId != null) {
         await updateProduct(state.editingId, payload);
-        showFormMsg('✅ Producto actualizado.', 'ok');
-        showToast('✅ Producto actualizado');
+        showFormMsg('Producto actualizado.', 'ok');
+        showToast('Producto actualizado');
       } else {
         const manualId = form.id.value.trim();
         if (manualId) payload.id = manualId;
         await createProduct(payload);
-        showFormMsg('✅ Producto creado y guardado en Supabase.', 'ok');
-        showToast('✅ Producto creado');
+        showFormMsg('Producto creado y guardado en Supabase.', 'ok');
+        showToast('Producto creado');
       }
       await loadProducts();
       renderTable();
@@ -471,7 +400,9 @@ async function init() {
 
   updatePreview();
   renderPhotoGrid();
+}
 
+async function refreshPanelData() {
   try {
     await loadProducts();
     renderTable();
@@ -480,6 +411,73 @@ async function init() {
     if (tbody) {
       tbody.innerHTML = `<tr><td colspan="7" class="admin-empty">Error al cargar: ${err.message}</td></tr>`;
     }
+  }
+}
+
+async function init() {
+  const form = $('#productForm');
+  if (!form) return;
+
+  // ----- Login (siempre se registra) -----
+  const loginForm = $('#loginForm');
+  if (loginForm) {
+    const togglePw = $('#togglePw');
+    if (togglePw) {
+      togglePw.addEventListener('click', () => {
+        const input = loginForm.password;
+        const show = input.type === 'password';
+        input.type = show ? 'text' : 'password';
+        togglePw.textContent = show ? 'Ocultar' : 'Ver';
+        togglePw.setAttribute('aria-pressed', show ? 'true' : 'false');
+      });
+    }
+
+    loginForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = loginForm.email.value.trim();
+      const password = loginForm.password.value;
+      if (!email || !password) {
+        showLoginMsg('Ingresa tu correo y contrasena.');
+        return;
+      }
+      const btn = $('#loginBtn');
+      if (btn) { btn.disabled = true; btn.textContent = 'Ingresando...'; }
+      try {
+        await signInAdmin(email, password);
+        const session = await getSession();
+        if (!session) {
+          showLoginMsg('No se pudo iniciar sesion. Revisa tu correo y contrasena.');
+          return;
+        }
+        showLoginMsg('', 'ok');
+        showPanel(session);
+        setupPanel();          // <-- engancha fotos/form tras el login
+        await refreshPanelData();
+      } catch (err) {
+        showLoginMsg(loginErrorText(err));
+      } finally {
+        if (btn) { btn.disabled = false; btn.textContent = 'Ingresar'; }
+      }
+    });
+  }
+
+  const logoutBtn = $('#logoutBtn');
+  if (logoutBtn) {
+    logoutBtn.addEventListener('click', async () => {
+      try { await signOutAdmin(); } catch (_) {}
+      showPanel(null);
+      panelReady = false;
+    });
+  }
+
+  // ----- Check sesion existente -----
+  let session = null;
+  try { session = await getSession(); } catch (_) {}
+  showPanel(session);
+
+  if (session) {
+    setupPanel();
+    await refreshPanelData();
   }
 }
 

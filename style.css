@@ -25,6 +25,7 @@
 /* Fuente de emojis consistente en todos los dispositivos.
    Evita que Android/iOS dibujen los emojis con contorno oscuro distinto al de PC. */
 @import url('https://fonts.googleapis.com/css2?family=Noto+Color+Emoji&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Pompiere&display=swap');
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -46,10 +47,15 @@ body {
   align-items: stretch;
 }
 
-h1, h2, h3, h4, .brand-text strong {
-  font-family: 'Baloo 2', 'Nunito', sans-serif;
+h1, h2, h3, h4 {
+  font-family: 'Pompiere', 'Baloo 2', 'Nunito', sans-serif;
   line-height: 1.15;
   color: var(--texto);
+  /* Pompiere solo trae peso 400 (trazo fino). Engrosamos con un contorno
+     del mismo color para que se lea mas ancho/solido sin cambiar el tamano. */
+  -webkit-text-stroke: 0.45px currentColor;
+  text-stroke: 0.45px currentColor;
+  letter-spacing: 0.2px;
 }
 
 .container {
@@ -144,7 +150,14 @@ svg {
 .brand-emoji .brand-yarn { width: 1em; height: 1em; display: block; }
 
 .brand-text { display: flex; flex-direction: column; }
-.brand-text strong { font-size: 1.15rem; }
+.brand-text strong {
+  font-family: 'Baloo 2', 'Nunito', sans-serif;  /* fuente redondeada y gruesa, legible */
+  font-size: 1.4rem;
+  font-weight: 800;      /* bien marcado para que se lea claro */
+  letter-spacing: 0.3px;
+  line-height: 1.1;
+  color: var(--texto);
+}
 .brand-text small { color: var(--texto-suave); font-size: 0.75rem; }
 
 .main-nav {
@@ -364,9 +377,10 @@ svg {
 .mode-icon { font-size: 2.6rem; font-family: var(--fuente-emoji); }
 
 .mode-title {
-  font-family: 'Baloo 2', sans-serif;
+  font-family: 'Pompiere', 'Baloo 2', sans-serif;
   font-size: 1.35rem;
-  font-weight: 700;
+  -webkit-text-stroke: 0.4px currentColor;
+  text-stroke: 0.4px currentColor;
 }
 
 .mode-desc { color: var(--texto-suave); font-size: 0.92rem; }
@@ -700,7 +714,7 @@ svg {
   border: 1px solid var(--lana-gris);
 }
 
-.stat strong { font-family: 'Baloo 2', sans-serif; font-size: 1.6rem; color: var(--rosa-fuerte); }
+.stat strong { font-family: 'Pompiere', 'Baloo 2', sans-serif; font-size: 1.6rem; color: var(--rosa-fuerte); -webkit-text-stroke: 0.4px currentColor; }
 .stat span { color: var(--texto-suave); font-size: 0.85rem; }
 
 /* ===== CONTÁCTANOS ===== */
