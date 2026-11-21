@@ -3,7 +3,18 @@ import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js
 const supabaseUrl = 'https://ogkqjyoiadovchobbnik.supabase.co';
 const supabaseKey = 'sb_publishable_DrVZWQpgCbF4pZfWh0UdMQ_cLRvIAut';
 
-export const supabase = createClient(supabaseUrl, supabaseKey);
+// La sesion de admin NO se persiste entre visitas: guardamos el token en
+// sessionStorage (se borra al cerrar la pestana/ventana) en vez de localStorage,
+// asi al cerrar la pagina se desloguea automaticamente.
+export const supabase = createClient(supabaseUrl, supabaseKey, {
+  auth: {
+    storage: window.sessionStorage,
+    storageKey: 'patitas-admin-auth',
+    persistSession: true,
+    autoRefreshToken: true,
+    detectSessionInUrl: false,
+  },
+});
 
 const TABLE = 'productos';
 

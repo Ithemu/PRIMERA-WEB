@@ -391,6 +391,12 @@ async function init() {
     });
   }
 
+  // Desloguear automaticamente al cerrar/recargar la pagina.
+  // sessionStorage ya se limpia al cerrar la pestana; esto refuerza el cierre.
+  window.addEventListener('beforeunload', () => {
+    try { signOutAdmin(); } catch (_) {}
+  });
+
   // ----- Check sesión existente -----
   let session = null;
   try { session = await getSession(); } catch (_) {}
