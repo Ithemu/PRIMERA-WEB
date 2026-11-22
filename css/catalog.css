@@ -54,8 +54,8 @@
 
 .catalog-product-grid {
   display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: 1.25rem;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1.5rem;
   width: 100%;
   min-height: 1px;
 }
@@ -150,7 +150,7 @@
 
 .catalog-card-title {
   font-family: 'Baloo 2', sans-serif;
-  font-size: 1rem;
+  font-size: 1.15rem;
   font-weight: 700;
   color: var(--texto);
   margin: 0;
@@ -167,7 +167,7 @@
 
 .catalog-card-price {
   font-family: 'Baloo 2', sans-serif;
-  font-size: 1rem;
+  font-size: 1.15rem;
   font-weight: 800;
   color: var(--rosa-fuerte);
   text-align: center;
@@ -284,4 +284,61 @@
   .catalog-product-grid {
     grid-template-columns: 1fr;
   }
+}
+
+/* ===== Fila de compra: selector de cantidad + boton añadir ===== */
+.catalog-card-buy {
+  display: flex;
+  align-items: stretch;
+  gap: 0.5rem;
+  margin-top: 0.4rem;
+}
+
+.card-qty {
+  display: inline-flex;
+  align-items: center;
+  border: 2px solid var(--rosa-medio);
+  border-radius: var(--radio-boton);
+  background: var(--blanco);
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.card-qty-btn {
+  width: 32px;
+  height: 100%;
+  min-height: 38px;
+  border: none;
+  background: var(--rosa-claro);
+  color: var(--texto);
+  font-size: 1.1rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: background var(--transicion);
+  display: grid;
+  place-items: center;
+}
+
+.card-qty-btn:hover:not(:disabled) {
+  background: var(--rosa-medio);
+}
+
+.card-qty-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.card-qty-num {
+  min-width: 34px;
+  text-align: center;
+  font-weight: 800;
+  font-size: 0.95rem;
+  color: var(--texto);
+  user-select: none;
+}
+
+/* El boton de añadir ocupa el resto de la fila */
+.catalog-card-buy .catalog-card-cta {
+  flex: 1;
+  width: auto;
 }

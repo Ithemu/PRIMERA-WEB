@@ -133,27 +133,32 @@ async function fetchProducts() {
 }
 
 /* ---------- Carrito ---------- */
-function addToCart(id) {
+function addToCart(id, qty = 1) {
   const product = findProduct(id);
   if (!product) return;
 
+  const addQty = Math.max(1, Math.floor(Number(qty) || 1));
   const key = String(product.id);
   const existing = cart.find((item) => String(item.id) === key);
   const currentQty = existing ? existing.qty : 0;
 
-  // Respeta el stock disponible (undefined = sin límite)
+  // Respeta el stock disponible (undefined = sin limite)
   const maxStock = Number.isFinite(product.stock) ? Number(product.stock) : Infinity;
   if (maxStock <= 0) {
-    showToast(`😢 ${product.name} está agotado`);
-    return;
-  }
-  if (currentQty >= maxStock) {
-    showToast(`Solo quedan ${maxStock} ${maxStock === 1 ? 'unidad' : 'unidades'} de ${product.name}`);
+    showToast('\u274C ' + product.name + ' esta agotado');
     return;
   }
 
+  // Cuanto realmente se puede agregar sin superar el stock
+  const space = maxStock - currentQty;
+  if (space <= 0) {
+    showToast('Solo quedan ' + maxStock + ' ' + (maxStock === 1 ? 'unidad' : 'unidades') + ' de ' + product.name);
+    return;
+  }
+  const finalAdd = Math.min(addQty, space);
+
   if (existing) {
-    existing.qty += 1;
+    existing.qty += finalAdd;
   } else {
     cart.push({
       id: key,
@@ -162,13 +167,18 @@ function addToCart(id) {
       emoji: product.emoji,
       image_url: product.image_url || null,
       stock: Number.isFinite(product.stock) ? Number(product.stock) : null,
-      qty: 1,
+      qty: finalAdd,
     });
   }
 
   saveCart();
   renderCart();
-  showToast(`✨ ${product.name} añadido al carrito`);
+
+  if (finalAdd < addQty) {
+    showToast('Solo quedan ' + maxStock + ' ' + (maxStock === 1 ? 'unidad' : 'unidades') + ' de ' + product.name);
+  } else {
+    showToast('\u2705 ' + product.name + ' anadido al carrito');
+  }
 }
 
 window.addToCart = addToCart;
@@ -322,7 +332,7 @@ function renderCart() {
   } else {
     itemsEl.innerHTML = cart.map((item) => `
       <div class="cart-item">
-        <div class="cart-item-img" aria-hidden="true">${item.emoji}</div>
+        <div class="cart-item-img">${item.image_url ? `<img src="${item.image_url}" alt="">` : `<span aria-hidden="true">${item.emoji}</span>`}</div>
         <div class="cart-item-info">
           <h4>${item.name}</h4>
           <span>${formatCLP(item.price)} c/u</span>
@@ -679,3 +689,47 @@ decoratePapeleriaCards();
    y los registra vía window.registerProducts para que el carrito los resuelva.
    No duplicamos la carga aquí para evitar condiciones de carrera. */
 
+/* ---------- Acceso discreto al panel: 5 clicks seguidos en el logo ---------- */
+(function setupBrandSecret() {
+  const CLICKS_NEEDED = 5;
+  const WINDOW_MS = 1500; // tiempo maximo entre el 1er y el 5to click
+
+  let count = 0;
+  let lastTs = 0;
+  let navTimer = null;
+
+  function getBrand() {
+    return document.querySelector('.site-header .brand') || document.querySelector('.brand');
+  }
+
+  document.addEventListener('click', (e) => {
+    const brand = getBrand();
+    if (!brand || !brand.contains(e.target)) return;
+
+    // Siempre interceptamos la navegacion del logo para poder contar los clicks.
+    e.preventDefault();
+
+    const now = Date.now();
+    if (now - lastTs > WINDOW_MS) count = 0; // reinicia si tardo mucho
+    lastTs = now;
+    count += 1;
+
+    // Reinicia el temporizador de navegacion normal (un click simple -> inicio)
+    if (navTimer) clearTimeout(navTimer);
+
+    if (count >= CLICKS_NEEDED) {
+      count = 0;
+      if (navTimer) { clearTimeout(navTimer); navTimer = null; }
+      // Acceso secreto al panel
+      window.location.href = 'admin.html';
+      return;
+    }
+
+    // Un click simple: navegar a inicio tras breve espera (por si vienen mas clicks)
+    navTimer = setTimeout(() => {
+      count = 0;
+      const href = brand.getAttribute('href');
+      if (href) window.location.href = href;
+    }, 320);
+  }, true);
+})();

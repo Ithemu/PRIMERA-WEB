@@ -73,27 +73,63 @@ document.addEventListener('DOMContentLoaded', async () => {
       const ctaLabel = agotado ? 'Sin stock' : 'Añadir al Carrito';
 
       return `
-        <article class="catalog-card${agotado ? ' is-soldout' : ''}">
+        <article class="catalog-card${agotado ? ' is-soldout' : ''}" data-stock="${stock}">
           ${media}
           <div class="catalog-card-body">
             <h3 class="catalog-card-title">${safeName}</h3>
             <p class="catalog-card-desc">${safeDesc}</p>
             <span class="catalog-card-price">${escapeHtml(precioFormateado)}</span>
             ${stockBadge}
-            <button class="catalog-card-cta" type="button" ${disabled} data-add="${safeId}">
-              ${ctaLabel}
-            </button>
+            <div class="catalog-card-buy">
+              <div class="card-qty" data-qty-box="${safeId}">
+                <button type="button" class="card-qty-btn" data-qdec="${safeId}" aria-label="Quitar uno" ${disabled}>-</button>
+                <span class="card-qty-num" data-qnum="${safeId}">1</span>
+                <button type="button" class="card-qty-btn" data-qinc="${safeId}" aria-label="Agregar uno" ${disabled}>+</button>
+              </div>
+              <button class="catalog-card-cta" type="button" ${disabled} data-add="${safeId}">
+                ${ctaLabel}
+              </button>
+            </div>
           </div>
         </article>
       `;
     }).join('');
 
-    catalogGrid.querySelectorAll('[data-add]').forEach((btn) => {
-      btn.addEventListener('click', () => {
+    // Selector de cantidad (- n +) y añadir al carrito.
+    // Usamos DELEGACION en el grid: un solo listener, robusto ante re-render.
+    catalogGrid.addEventListener('click', (e) => {
+      const card = e.target.closest('.catalog-card');
+      if (!card) return;
+      const numEl = card.querySelector('.card-qty-num');
+      if (!numEl) return;
+
+      const incBtn = e.target.closest('[data-qinc]');
+      const decBtn = e.target.closest('[data-qdec]');
+      const addBtn = e.target.closest('[data-add]');
+
+      if (incBtn) {
+        const maxStock = Number(card.dataset.stock ?? Infinity);
+        let v = Number(numEl.textContent || 1) + 1;
+        if (Number.isFinite(maxStock) && maxStock > 0) v = Math.min(v, maxStock);
+        numEl.textContent = v;
+        return;
+      }
+
+      if (decBtn) {
+        let v = Number(numEl.textContent || 1) - 1;
+        if (v < 1) v = 1;
+        numEl.textContent = v;
+        return;
+      }
+
+      if (addBtn) {
+        const id = addBtn.dataset.add;
+        const qty = Math.max(1, Number(numEl.textContent || 1));
         if (typeof window.addToCart === 'function') {
-          window.addToCart(btn.dataset.add);
+          window.addToCart(id, qty);
         }
-      });
+        numEl.textContent = '1';
+      }
     });
 
   } catch (err) {
