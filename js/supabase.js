@@ -101,3 +101,39 @@ export async function getSession() {
   const { data } = await supabase.auth.getSession();
   return data.session;
 }
+
+/* ---------- Configuracion del sitio (menu especial) ---------- */
+export async function getConfig() {
+  const { data, error } = await supabase
+    .from('config')
+    .select('*')
+    .eq('id', 1)
+    .maybeSingle();
+  if (error) {
+    console.error('[config] getConfig error:', error);
+    throw error;
+  }
+  return data;
+}
+
+export async function updateConfig(patch) {
+  const { data, error } = await supabase
+    .from('config')
+    .update(patch)
+    .eq('id', 1)
+    .select()
+    .single();
+  if (error) throw error;
+  return data;
+}
+
+/* Productos filtrados por categoria (para el menu especial / papeleria) */
+export async function fetchProductsByCategory(category) {
+  const { data, error } = await supabase
+    .from('productos')
+    .select('*')
+    .eq('category', category)
+    .order('id', { ascending: true });
+  if (error) throw error;
+  return data ?? [];
+}

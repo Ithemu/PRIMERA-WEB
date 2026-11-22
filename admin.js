@@ -3,7 +3,7 @@
    - Login con Supabase Auth
    - CRUD de productos
    - Subida de hasta 3 fotos por producto a Supabase Storage
-   - Categorías: stock / personalizado / papeleria
+   - Categorías: stock / papeleria / especial
    ========================================================= */
 
 import {
@@ -15,6 +15,8 @@ import {
   signInAdmin,
   signOutAdmin,
   getSession,
+  getConfig,
+  updateConfig,
 } from './js/supabase.js';
 
 const $ = (sel, ctx = document) => ctx.querySelector(sel);
@@ -196,7 +198,7 @@ function updatePreview() {
 
 /* ---------- Tabla ---------- */
 function categoryLabel(cat) {
-  const map = { stock: 'Stock', personalizado: 'Personalizado', papeleria: 'Papelería' };
+  const map = { stock: 'Stock', papeleria: 'Papelería', especial: 'Especial' };
   return map[cat] || '—';
 }
 
@@ -398,8 +400,66 @@ function setupPanel() {
     }
   });
 
-  updatePreview();
+    updatePreview();
   renderPhotoGrid();
+
+  setupEspecialConfig();
+}
+
+/* ---------- Config del menu Especial (on/off + nombre) ---------- */
+let especialReady = false;
+async function setupEspecialConfig() {
+  const section = $('#especialConfigSection');
+  if (!section) return;
+
+  if (!especialReady) {
+    especialReady = true;
+    const saveBtn = $('#especialSaveBtn');
+    if (saveBtn) saveBtn.addEventListener('click', saveEspecialConfig);
+  }
+
+  // Cargar valores actuales
+  try {
+    const cfg = await getConfig();
+    const activo = $('#especialActivo');
+    const nombre = $('#especialNombre');
+    if (activo) activo.checked = !!cfg.especial_activo;
+    if (nombre) nombre.value = cfg.especial_nombre || 'Especial';
+    } catch (err) {
+    console.error('[especial] error al cargar config:', err);
+    const st = $('#especialStatus');
+    if (st) {
+      const msg = err && (err.message || err.error_description || err.details);
+      st.textContent = 'Error config: ' + (msg || 'desconocido');
+      st.className = 'admin-especial-status err';
+    }
+  }
+}
+
+async function saveEspecialConfig() {
+  const activo = $('#especialActivo');
+  const nombre = $('#especialNombre');
+  const st = $('#especialStatus');
+  const btn = $('#especialSaveBtn');
+
+  const especial_activo = !!activo?.checked;
+  const especial_nombre = (nombre?.value || '').trim() || 'Especial';
+
+  if (especial_activo && !especial_nombre) {
+    if (st) { st.textContent = 'Poné un nombre para el menú.'; st.className = 'admin-especial-status err'; }
+    return;
+  }
+
+  if (btn) { btn.disabled = true; btn.textContent = 'Guardando...'; }
+  try {
+    await updateConfig({ especial_activo, especial_nombre });
+    if (st) { st.textContent = 'Guardado ✓'; st.className = 'admin-especial-status ok'; }
+    setTimeout(() => { if (st) st.textContent = ''; }, 2500);
+  } catch (err) {
+    if (st) { st.textContent = 'Error: ' + (err.message || 'desconocido'); st.className = 'admin-especial-status err'; }
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = 'Guardar'; }
+  }
 }
 
 async function refreshPanelData() {

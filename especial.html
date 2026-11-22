@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="es-CL">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Especial · Patitas de Lana</title>
+  <meta name="description" content="Sección especial de amigurumis tejidos a mano en Chile." />
+  <meta name="robots" content="noindex" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Pompiere&family=Baloo+2:wght@400;500;600;700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="css/creadora.css" />
+  <link rel="stylesheet" href="css/catalog.css" />
+</head>
+<body>
+
+  <div class="announcement-bar" aria-hidden="true">
+    <div class="announcement-content">
+      ✨ Edición especial · Hecho a mano en Chile 🧶 Envíos a todo el país
+    </div>
+  </div>
+
+  <!-- ===== HEADER ===== -->
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="index.html" class="brand" aria-label="Patitas de Lana, inicio">
+        <span class="brand-emoji" aria-hidden="true"><svg class="brand-yarn" viewBox="0 0 24 24" width="1em" height="1em" role="img" aria-hidden="true" focusable="false" style="color: var(--rosa-fuerte); display: block;"><g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M5.5 6.5c3 2.2 6.8 3.3 10.5 3.3"/><path d="M4.2 10.5c3.4 2 7.6 3 11.8 2.8"/><path d="M4.5 15c3.6 1.6 7.9 2.1 12 1.4"/><path d="M8.6 4.4c1.7 3.4 2.7 7 2.8 10.7"/><path d="M13.6 4.2c-1.4 3.6-2 7.4-1.6 11.2"/></g></svg></span>
+        <span class="brand-text">
+          <strong>Patitas de Lana</strong>
+          <small>Amigurumis hechos a mano</small>
+        </span>
+      </a>
+
+      <nav class="main-nav" aria-label="Navegación principal" id="mainNav">
+        <a href="index.html">Inicio</a>
+        <a href="papeleria.html">Papelería</a>
+        <a href="nosotros.html">Nosotros</a>
+        <a href="contacto.html">Contacto</a>
+      </nav>
+
+      <button class="cart-toggle" id="cartToggle" aria-label="Abrir carrito de compras">
+        <span aria-hidden="true">🛒</span>
+        <span class="cart-count" id="cartCount">0</span>
+      </button>
+
+      <button class="nav-toggle" id="navToggle" aria-label="Abrir menú" aria-expanded="false" aria-controls="mobileNav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+
+    <nav class="mobile-nav" id="mobileNav" aria-label="Navegación móvil">
+      <a href="index.html">Inicio</a>
+      <a href="papeleria.html">Papelería</a>
+      <a href="nosotros.html">Nosotros</a>
+      <a href="contacto.html">Contacto</a>
+    </nav>
+  </header>
+
+  <!-- ===== HERO ESPECIAL ===== -->
+  <section class="catalog-hero">
+    <div class="container catalog-hero-inner">
+      <p class="catalog-hero-eyebrow">✨ Edición especial</p>
+      <h1 id="especialHero">Especial</h1>
+      <p class="catalog-hero-sub">
+        Piezas únicas de edición especial, hechas a mano. Precios en pesos chilenos (CLP).
+      </p>
+    </div>
+  </section>
+
+  <!-- ===== PRODUCTOS ESPECIALES ===== -->
+  <section class="section catalog-section" id="especial">
+    <div class="container">
+      <div class="catalog-product-grid" id="catalogGrid" data-category="especial" data-empty="No hay productos especiales disponibles en este momento." aria-live="polite">
+        <!-- Productos generados dinámicamente desde js/catalog.js -->
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== CARRITO (DRAWER) ===== -->
+  <aside class="cart-drawer" id="cartDrawer" aria-hidden="true" aria-label="Carrito de compras">
+    <div class="cart-header">
+      <h3>Tu carrito 🧺</h3>
+      <button class="cart-close" id="cartClose" aria-label="Cerrar">×</button>
+    </div>
+    <div class="cart-items" id="cartItems"></div>
+    <div class="cart-footer">
+      <div class="cart-total-row">
+        <span>Total</span>
+        <strong id="cartTotal">CLP $0</strong>
+      </div>
+      <button class="btn-checkout" id="checkoutBtn">Pagar con Webpay / Transbank</button>
+      <p class="cart-note">Pago seguro · Redcompra · Crédito · Mercado Pago</p>
+    </div>
+  </aside>
+  <div class="overlay" id="overlay" hidden></div>
+
+  <!-- ===== MODAL DE PAGO ===== -->
+  <div class="modal" id="paymentModal" role="dialog" aria-modal="true" aria-labelledby="paymentTitle" hidden>
+    <div class="modal-card">
+      <button class="modal-close" id="paymentClose" aria-label="Cerrar">×</button>
+      <h3 id="paymentTitle">Medio de pago</h3>
+      <p class="modal-sub">Simulación de pago seguro para el mercado chileno.</p>
+
+      <div class="payment-methods">
+        <label class="pay-method">
+          <input type="radio" name="payMethod" value="Webpay Plus" checked />
+          <span>💳 Webpay Plus</span>
+        </label>
+        <label class="pay-method">
+          <input type="radio" name="payMethod" value="Débito Redcompra" />
+          <span>🏧 Débito Redcompra</span>
+        </label>
+        <label class="pay-method">
+          <input type="radio" name="payMethod" value="Crédito Transbank" />
+          <span>💰 Crédito Transbank</span>
+        </label>
+        <label class="pay-method">
+          <input type="radio" name="payMethod" value="Mercado Pago" />
+          <span>🟢 Mercado Pago</span>
+        </label>
+      </div>
+
+      <div class="payment-summary">
+        <span>Monto a pagar</span>
+        <strong id="paymentAmount">CLP $0</strong>
+      </div>
+
+      <button class="btn-pay" id="confirmPay">Confirmar pago</button>
+      <p class="modal-note">🧪 Esta es una simulación. No se realizará ningún cargo real.</p>
+    </div>
+  </div>
+
+  <!-- ===== TOAST ===== -->
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="script.js"></script>
+  <script type="module" src="js/creadora.js"></script>
+  <script type="module" src="js/catalog.js"></script>
+  <script type="module" src="js/especial-nav.js"></script>
+</body>
+</html>

@@ -108,6 +108,21 @@
         position: static;
       }
     }
+  /* ===== Menu Especial (config) ===== */
+  .admin-especial { margin-top: 1.5rem; }
+  .admin-especial-hint { color: #7a6a72; font-size: 0.9rem; margin: 0.3rem 0 1rem; }
+  .admin-especial-row { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
+  .admin-especial-toggle { display: inline-flex; align-items: center; gap: 0.6rem; cursor: pointer; user-select: none; font-weight: 700; }
+  .admin-especial-toggle input { position: absolute; opacity: 0; width: 0; height: 0; }
+  .admin-especial-slider { width: 52px; height: 28px; border-radius: 999px; background: #cbbfc4; position: relative; transition: background 0.2s ease; flex-shrink: 0; }
+  .admin-especial-slider::after { content: ''; position: absolute; top: 3px; left: 3px; width: 22px; height: 22px; border-radius: 50%; background: #fff; transition: transform 0.2s ease; box-shadow: 0 1px 3px rgba(0,0,0,0.25); }
+  .admin-especial-toggle input:checked + .admin-especial-slider { background: #e08aa6; }
+  .admin-especial-toggle input:checked + .admin-especial-slider::after { transform: translateX(24px); }
+  .admin-especial-name { flex: 1; min-width: 200px; padding: 0.55rem 0.8rem; border: 2px solid #e5d5dc; border-radius: 10px; font-family: inherit; font-size: 0.95rem; }
+  .admin-especial-name:focus { outline: none; border-color: #e08aa6; }
+  .admin-especial-status { font-size: 0.85rem; font-weight: 700; }
+  .admin-especial-status.ok { color: #2e8b57; }
+  .admin-especial-status.err { color: #c0392b; }
   </style>
 </head>
 <body>
@@ -128,13 +143,6 @@
           <small>Amigurumis hechos a mano</small>
         </span>
       </a>
-
-      <nav class="main-nav" aria-label="Navegación principal">
-        <a href="index.html">Inicio</a>
-        <a href="catalogo.html">Catálogo</a>
-        <a href="nosotros.html">Nosotros</a>
-        <a href="contacto.html">Contacto</a>
-      </nav>
     </div>
   </header>
 
@@ -180,7 +188,7 @@
           <li><strong>Nombre y descripción:</strong> son lo que ve el cliente en la tarjeta del catálogo.</li>
           <li><strong>Precio:</strong> en pesos chilenos, sin puntos ni símbolos (ej: 12990).</li>
           <li><strong>Stock:</strong> cuántas unidades hay. Si es 0, la tarjeta se muestra como “Agotado”.</li>
-          <li><strong>Categoría:</strong> elegí Stock, Personalizado o Papelería.</li>
+          <li><strong>Categoría:</strong> elegí Stock, Papelería o Especial.</li>
           <li><strong>Guardar:</strong> al terminar, click en “Guardar producto”. Para corregir uno existente, usá “Editar” en la tabla.</li>
         </ol>
       </details>
@@ -210,8 +218,8 @@
             <label>Categoría
               <select name="category">
                 <option value="stock">Stock</option>
-                <option value="personalizado">Personalizado</option>
                 <option value="papeleria">Papelería</option>
+                <option value="especial">Especial</option>
               </select>
             </label>
 
@@ -270,6 +278,23 @@
           </table>
         </div>
       </section>
+
+      <!-- ===== MENU ESPECIAL (on/off + nombre) ===== -->
+      <section class="admin-table-section admin-especial" id="especialConfigSection">
+        <h2>Men&uacute; Especial</h2>
+        <p class="admin-especial-hint">Activa o desactiva la p&aacute;gina &quot;Especial&quot; en el sitio. Cuando est&aacute; desactivada, desaparece del men&uacute; del front end.</p>
+        <div class="admin-especial-row">
+          <label class="admin-especial-toggle">
+            <input type="checkbox" id="especialActivo" />
+            <span class="admin-especial-slider"></span>
+            <span class="admin-especial-label">Activo</span>
+          </label>
+          <input type="text" id="especialNombre" class="admin-especial-name" placeholder="Nombre del men&uacute; (ej: Especial Halloween)" maxlength="40" />
+          <button type="button" class="admin-btn" id="especialSaveBtn">Guardar</button>
+          <span class="admin-especial-status" id="especialStatus"></span>
+        </div>
+      </section>
+
     </div>
       </div> <!-- /adminContent -->
 
