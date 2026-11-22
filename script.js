@@ -429,7 +429,12 @@ const checkoutBtn = $('#checkoutBtn');
 const paymentClose = $('#paymentClose');
 const confirmPay = $('#confirmPay');
 
-if (checkoutBtn) checkoutBtn.addEventListener('click', openPayment);
+// El boton "Pagar" del carrito lleva a la pagina de checkout completa.
+// (El modal de pago antiguo queda como respaldo en paginas sin checkout.html).
+if (checkoutBtn) checkoutBtn.addEventListener('click', () => {
+  if (cart.length === 0) return;
+  window.location.href = 'checkout.html';
+});
 if (paymentClose) paymentClose.addEventListener('click', closePayment);
 
 if (confirmPay) {

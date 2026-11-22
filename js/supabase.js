@@ -127,6 +127,99 @@ export async function updateConfig(patch) {
   return data;
 }
 
+/* ---------- Pedidos ---------- */
+function genOrderCode() {
+  const d = new Date();
+  const ymd = d.getFullYear().toString().slice(-2)
+    + String(d.getMonth() + 1).padStart(2, '0')
+    + String(d.getDate()).padStart(2, '0');
+  const rnd = Math.random().toString(36).slice(2, 6).toUpperCase();
+  return 'PDL-' + ymd + '-' + rnd;
+}
+
+export async function createOrder(payload) {
+  const code = payload.codigo || genOrderCode();
+  const { data, error } = await supabase
+    .from('pedidos')
+    .insert({ ...payload, codigo: code })
+    .select()
+    .single();
+  if (error) throw error;
+  return data;
+}
+
+export async function fetchOrders() {
+  const { data, error } = await supabase
+    .from('pedidos')
+    .select('*')
+    .order('created_at', { ascending: false });
+  if (error) throw error;
+  return data ?? [];
+}
+
+/* ---------- Cupones ---------- */
+export async function validateCoupon(codigo) {
+  const code = (codigo || '').trim().toUpperCase();
+  if (!code) return { ok: false, msg: 'Ingresa un código.' };
+  const { data, error } = await supabase
+    .from('cupones')
+    .select('*')
+    .eq('codigo', code)
+    .maybeSingle();
+  if (error) throw error;
+  if (!data) return { ok: false, msg: 'El cupón no existe.' };
+  if (!data.activo) return { ok: false, msg: 'El cupón no está activo.' };
+  if (data.usos_max != null && data.usos_actuales >= data.usos_max) {
+    return { ok: false, msg: 'El cupón ya fue utilizado.' };
+  }
+  return { ok: true, cupon: data };
+}
+
+export async function fetchCoupons() {
+  const { data, error } = await supabase
+    .from('cupones')
+    .select('*')
+    .order('created_at', { ascending: false });
+  if (error) throw error;
+  return data ?? [];
+}
+
+export async function createCoupon(payload) {
+  const clean = {
+    codigo: (payload.codigo || '').trim().toUpperCase(),
+    tipo: payload.tipo === 'fijo' ? 'fijo' : 'porcentaje',
+    valor: Number(payload.valor) || 0,
+    activo: payload.activo !== false,
+    usos_max: payload.usos_max != null && payload.usos_max !== '' ? Number(payload.usos_max) : null,
+  };
+  const { data, error } = await supabase.from('cupones').insert(clean).select().single();
+  if (error) throw error;
+  return data;
+}
+
+export async function updateCoupon(id, patch) {
+  const { data, error } = await supabase.from('cupones').update(patch).eq('id', id).select().single();
+  if (error) throw error;
+  return data;
+}
+
+export async function deleteCoupon(id) {
+  const { error } = await supabase.from('cupones').delete().eq('id', id);
+  if (error) throw error;
+}
+
+/* Incrementa el uso de un cupon. Intenta RPC segura; si no existe, update directo. */
+export async function incrementCouponUse(id) {
+  const { error: rpcErr } = await supabase.rpc('increment_coupon_use', { coupon_id: id });
+  if (!rpcErr) return;
+  try {
+    const { data } = await supabase.from('cupones').select('usos_actuales').eq('id', id).single();
+    if (data) {
+      await supabase.from('cupones').update({ usos_actuales: (data.usos_actuales || 0) + 1 }).eq('id', id);
+    }
+  } catch (_) { /* silencioso */ }
+}
+
 /* Productos filtrados por categoria (para el menu especial / papeleria) */
 export async function fetchProductsByCategory(category) {
   const { data, error } = await supabase

@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="es-CL">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Finalizar compra · Patitas de Lana</title>
+  <meta name="robots" content="noindex" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Pompiere&family=Baloo+2:wght@400;500;600;700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="css/checkout.css" />
+</head>
+<body>
+
+  <!-- ===== HEADER ===== -->
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="index.html" class="brand" aria-label="Patitas de Lana, inicio">
+        <span class="brand-emoji" aria-hidden="true"><svg class="brand-yarn" viewBox="0 0 24 24" width="1em" height="1em" role="img" aria-hidden="true" focusable="false" style="color: var(--rosa-fuerte); display: block;"><g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M5.5 6.5c3 2.2 6.8 3.3 10.5 3.3"/><path d="M4.2 10.5c3.4 2 7.6 3 11.8 2.8"/><path d="M4.5 15c3.6 1.6 7.9 2.1 12 1.4"/><path d="M8.6 4.4c1.7 3.4 2.7 7 2.8 10.7"/><path d="M13.6 4.2c-1.4 3.6-2 7.4-1.6 11.2"/></g></svg></span>
+        <span class="brand-text">
+          <strong>Patitas de Lana</strong>
+          <small>Amigurumis hechos a mano</small>
+        </span>
+      </a>
+    </div>
+  </header>
+
+  <!-- ===== CHECKOUT ===== -->
+  <main class="checkout-page">
+    <div class="container">
+      <a href="javascript:history.back()" class="checkout-back">← Volver</a>
+      <h1 class="checkout-title">Finalizar compra</h1>
+
+      <div class="checkout-layout">
+        <!-- ----- Columna izquierda: formulario ----- -->
+        <form class="checkout-form" id="checkoutForm" novalidate>
+
+          <!-- 1. Datos personales -->
+          <fieldset class="co-block">
+            <legend>1. Tus datos</legend>
+            <div class="co-row">
+              <label>Nombre<input name="nombre" type="text" required autocomplete="given-name" /></label>
+              <label>Apellido<input name="apellido" type="text" required autocomplete="family-name" /></label>
+            </div>
+            <div class="co-row">
+              <label>Correo electrónico<input name="email" type="email" required autocomplete="email" placeholder="tu@correo.cl" /></label>
+              <label>Teléfono<input name="telefono" type="tel" required autocomplete="tel" placeholder="+56 9 1234 5678" /></label>
+            </div>
+          </fieldset>
+
+          <!-- 2. Entrega -->
+          <fieldset class="co-block">
+            <legend>2. Entrega</legend>
+            <div class="co-delivery-toggle">
+              <label class="co-radio-pill">
+                <input type="radio" name="entrega" value="carrier" checked />
+                <span>🚚 Envío a domicilio</span>
+              </label>
+              <label class="co-radio-pill">
+                <input type="radio" name="entrega" value="retiro" />
+                <span>🏠 Retiro en tienda</span>
+              </label>
+            </div>
+
+            <div id="addressFields" class="co-address">
+              <label>Calle y número<input name="calle" type="text" autocomplete="street-address" /></label>
+              <div class="co-row">
+                <label>Comuna<input name="comuna" type="text" autocomplete="address-level3" /></label>
+                <label>Ciudad<input name="ciudad" type="text" autocomplete="address-level2" /></label>
+              </div>
+              <label>Región
+                <select name="region" id="regionSelect">
+                  <option value="">Selecciona tu región</option>
+                  <option value="Arica y Parinacota">Arica y Parinacota</option>
+                  <option value="Tarapacá">Tarapacá</option>
+                  <option value="Antofagasta">Antofagasta</option>
+                  <option value="Atacama">Atacama</option>
+                  <option value="Coquimbo">Coquimbo</option>
+                  <option value="Valparaíso">Valparaíso</option>
+                  <option value="Metropolitana">Región Metropolitana</option>
+                  <option value="O'Higgins">O'Higgins</option>
+                  <option value="Maule">Maule</option>
+                  <option value="Ñuble">Ñuble</option>
+                  <option value="Biobío">Biobío</option>
+                  <option value="Araucanía">Araucanía</option>
+                  <option value="Los Ríos">Los Ríos</option>
+                  <option value="Los Lagos">Los Lagos</option>
+                  <option value="Aysén">Aysén</option>
+                  <option value="Magallanes">Magallanes</option>
+                </select>
+              </label>
+
+              <!-- Opciones de carrier (las llena checkout.js via cotizacion) -->
+              <div class="co-carriers" id="carrierOptions">
+                <p class="co-carriers-hint">Selecciona una región para ver las opciones de envío.</p>
+              </div>
+            </div>
+
+            <p class="co-retiro-info" id="retiroInfo" hidden>
+              📍 Retiro en tienda (sin costo). Coordinaremos el punto de retiro por correo.
+            </p>
+          </fieldset>
+
+          <!-- 3. Notas -->
+          <fieldset class="co-block">
+            <legend>3. Notas del pedido <small>(opcional)</small></legend>
+            <textarea name="notas" rows="3" placeholder="¿Algo que debamos saber? Ej: color, dedicatoria, etc."></textarea>
+          </fieldset>
+
+          <!-- 4. Cupón -->
+          <fieldset class="co-block">
+            <legend>4. Cupón de descuento <small>(opcional)</small></legend>
+            <div class="co-coupon-row">
+              <input name="cupon" id="couponInput" type="text" placeholder="Ingresa tu código" autocomplete="off" />
+              <button type="button" class="co-btn ghost" id="applyCouponBtn">Aplicar</button>
+            </div>
+            <p class="co-coupon-msg" id="couponMsg"></p>
+          </fieldset>
+
+          <!-- 5. Pago (simulado) -->
+          <fieldset class="co-block">
+            <legend>5. Método de pago <small>(simulado)</small></legend>
+            <div class="co-pay-methods">
+              <label class="co-pay"><input type="radio" name="metodo_pago" value="webpay" checked /><span>💳 Webpay Plus</span></label>
+              <label class="co-pay"><input type="radio" name="metodo_pago" value="debito" /><span>🏧 Débito</span></label>
+              <label class="co-pay"><input type="radio" name="metodo_pago" value="credito" /><span>💰 Crédito</span></label>
+            </div>
+            <p class="co-pay-note">🔒 Simulación: aún no se procesa un pago real.</p>
+          </fieldset>
+        </form>
+
+        <!-- ----- Columna derecha: resumen ----- -->
+        <aside class="checkout-summary">
+          <h2>Resumen del pedido</h2>
+          <div class="co-summary-items" id="summaryItems"><!-- carrito --></div>
+          <div class="co-summary-line"><span>Subtotal</span><span id="sumSubtotal">CLP $0</span></div>
+          <div class="co-summary-line" id="sumDiscountLine" hidden><span>Descuento</span><span id="sumDiscount">- CLP $0</span></div>
+          <div class="co-summary-line"><span>Envío</span><span id="sumEnvio">—</span></div>
+          <div class="co-summary-line total"><span>Total</span><strong id="sumTotal">CLP $0</strong></div>
+
+          <button type="button" class="co-btn primary co-pay-btn" id="placeOrderBtn">Realizar pedido</button>
+          <p class="co-secure">🔒 Pago 100% seguro</p>
+        </aside>
+      </div>
+    </div>
+  </main>
+
+  <!-- ===== CONFIRMACIÓN (overlay) ===== -->
+  <div class="co-confirm" id="orderConfirm" hidden>
+    <div class="co-confirm-card">
+      <div class="co-confirm-icon">🎉</div>
+      <h2>¡Pedido realizado!</h2>
+      <p class="co-confirm-msg" id="confirmMsg"></p>
+      <p class="co-confirm-note">Recibirás un correo cuando tu pedido se encuentre entregado en el carrier, con la información correspondiente al envío.</p>
+      <p class="co-confirm-code">N° de pedido: <strong id="confirmCode">—</strong></p>
+      <a href="index.html" class="co-btn primary">Volver al inicio</a>
+    </div>
+  </div>
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="site-footer">
+    <div class="container">
+      <p>© <span id="year"></span> Patitas de Lana · Hecho a mano con amor en Chile 🧶</p>
+    </div>
+  </footer>
+
+  <!-- ===== TOAST ===== -->
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script type="module" src="js/checkout.js"></script>
+</body>
+</html>
