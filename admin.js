@@ -14,12 +14,19 @@ import {
   uploadProductImage,
   signInAdmin,
   signOutAdmin,
-  getSession,
+    getSession,
   getConfig,
   updateConfig,
+  fetchCoupons,
+  createCoupon,
+  updateCoupon,
+  deleteCoupon,
 } from './js/supabase.js';
 
 const $ = (sel, ctx = document) => ctx.querySelector(sel);
+const escapeHtml = (v = '') => String(v)
+  .replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;')
+  .replaceAll('"', '&quot;').replaceAll("'", '&#39;');
 const MAX_PHOTOS = 3;
 
 const state = {
@@ -401,9 +408,109 @@ function setupPanel() {
   });
 
     updatePreview();
-  renderPhotoGrid();
+    renderPhotoGrid();
 
-  setupEspecialConfig();
+    setupEspecialConfig();
+    setupCouponsForm();
+}
+
+/* ---------- Cupones ---------- */
+let couponsReady = false;
+let couponsCache = [];
+
+function setupCouponsForm() {
+    if (couponsReady) return;
+    couponsReady = true;
+
+    const form = $('#couponForm');
+    if (form) {
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const fd = new FormData(form);
+        const codigo = (fd.get('codigo') || '').toString().trim().toUpperCase();
+        const tipo = (fd.get('tipo') || 'porcentaje').toString();
+        const valor = Number(fd.get('valor')) || 0;
+        const usosRaw = (fd.get('usos_max') || '').toString().trim();
+        const msg = $('#couponFormMsg');
+
+        if (!codigo) { showCouponMsg('Ingresa un código.', 'err'); return; }
+        if (valor <= 0) { showCouponMsg('El valor debe ser mayor a 0.', 'err'); return; }
+        if (tipo === 'porcentaje' && valor > 100) { showCouponMsg('El porcentaje no puede superar 100.', 'err'); return; }
+
+        const btn = form.querySelector('button[type="submit"]');
+        if (btn) { btn.disabled = true; btn.textContent = 'Creando...'; }
+        try {
+          await createCoupon({
+            codigo, tipo, valor,
+            usos_max: usosRaw === '' ? null : Number(usosRaw),
+            activo: true,
+          });
+          showCouponMsg('Cupón creado ✓', 'ok');
+          form.reset();
+          await loadCoupons();
+        } catch (err) {
+          showCouponMsg('Error: ' + (err.message || 'desconocido'), 'err');
+        } finally {
+          if (btn) { btn.disabled = false; btn.textContent = 'Crear cupón'; }
+        }
+      });
+    }
+
+    // Delegacion en la tabla de cupones (toggle activo / borrar)
+    const tbody = $('#couponsTableBody');
+    if (tbody) {
+      tbody.addEventListener('change', async (e) => {
+        const chk = e.target.closest('.admin-coupon-active');
+        if (!chk) return;
+        const id = chk.dataset.id;
+        try { await updateCoupon(id, { activo: chk.checked }); }
+        catch (err) { alert('Error: ' + err.message); chk.checked = !chk.checked; }
+      });
+      tbody.addEventListener('click', async (e) => {
+        const del = e.target.closest('[data-del-coupon]');
+        if (!del) return;
+        if (!confirm('¿Eliminar este cupón?')) return;
+        try { await deleteCoupon(del.dataset.delCoupon); await loadCoupons(); }
+        catch (err) { alert('Error: ' + err.message); }
+      });
+    }
+}
+
+function showCouponMsg(text, type) {
+    const el = $('#couponFormMsg');
+    if (!el) return;
+    el.textContent = text;
+    el.className = 'admin-form-msg ' + (type || '');
+    el.hidden = false;
+}
+
+async function loadCoupons() {
+    const tbody = $('#couponsTableBody');
+    if (!tbody) return;
+    try {
+      const list = await fetchCoupons();
+      couponsCache = list;
+      if (!list.length) {
+        tbody.innerHTML = '<tr><td colspan="6" class="admin-empty">Aún no hay cupones.</td></tr>';
+        return;
+      }
+      tbody.innerHTML = list.map((c) => {
+        const valorTxt = c.tipo === 'porcentaje' ? `${c.valor}%` : 'CLP $' + Number(c.valor || 0).toLocaleString('es-CL');
+        const usosTxt = c.usos_max != null ? `${c.usos_actuales || 0} / ${c.usos_max}` : `${c.usos_actuales || 0} / ∞`;
+        return `
+          <tr>
+            <td class="admin-coupon-code">${escapeHtml(c.codigo)}</td>
+            <td>${c.tipo === 'porcentaje' ? 'Porcentaje' : 'Monto fijo'}</td>
+            <td>${valorTxt}</td>
+            <td>${usosTxt}</td>
+            <td><input type="checkbox" class="admin-coupon-active" data-id="${c.id}" ${c.activo ? 'checked' : ''} /></td>
+            <td><button type="button" class="admin-btn ghost" data-del-coupon="${c.id}">Eliminar</button></td>
+          </tr>
+        `;
+      }).join('');
+    } catch (err) {
+      tbody.innerHTML = `<tr><td colspan="6" class="admin-empty">Error al cargar cupones: ${escapeHtml(err.message)}</td></tr>`;
+    }
 }
 
 /* ---------- Config del menu Especial (on/off + nombre) ---------- */
@@ -466,6 +573,7 @@ async function refreshPanelData() {
   try {
     await loadProducts();
     renderTable();
+    await loadCoupons();
   } catch (err) {
     const tbody = $('#productsTableBody');
     if (tbody) {
@@ -509,12 +617,27 @@ async function init() {
           showLoginMsg('No se pudo iniciar sesion. Revisa tu correo y contrasena.');
           return;
         }
-        showLoginMsg('', 'ok');
+                showLoginMsg('', 'ok');
+        console.info('[admin] login exitoso:', email);
+        // TODO (pendiente): avisar por correo (Resend Edge Function 'notify-login')
+        // de este login exitoso a patitasdelanaa@gmail.com.
         showPanel(session);
         setupPanel();          // <-- engancha fotos/form tras el login
         await refreshPanelData();
-      } catch (err) {
-        showLoginMsg(loginErrorText(err));
+            } catch (err) {
+        // Mensaje segun el correo ingresado:
+        //  - Correo de la duena => mensaje generico de credenciales.
+        //  - Cualquier otro correo => mensaje de "intruso".
+        const ADMIN_OWNER_EMAIL = 'patitasdelanaa@gmail.com';
+        const isOwnerEmail = email.toLowerCase() === ADMIN_OWNER_EMAIL;
+        if (isOwnerEmail) {
+          showLoginMsg('Error en credenciales, revise contraseña.');
+        } else {
+          showLoginMsg('Te he pillado basura, estás intentando ingresar a una cuenta con seguridad, lárgate.');
+        }
+        console.warn('[admin] intento de login fallido:', email, '| owner:', isOwnerEmail);
+        // TODO (pendiente): avisar por correo (Resend Edge Function 'notify-login')
+        // de los intentos de login (exitosos y fallidos) a patitasdelanaa@gmail.com.
       } finally {
         if (btn) { btn.disabled = false; btn.textContent = 'Ingresar'; }
       }

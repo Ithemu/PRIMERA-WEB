@@ -123,6 +123,18 @@
   .admin-especial-status { font-size: 0.85rem; font-weight: 700; }
   .admin-especial-status.ok { color: #2e8b57; }
   .admin-especial-status.err { color: #c0392b; }
+  /* ===== Cupones ===== */
+  .admin-coupon-form { display: flex; gap: 0.6rem; flex-wrap: wrap; align-items: center; margin-bottom: 1rem; }
+  .admin-coupon-form input, .admin-coupon-form select {
+    padding: 0.55rem 0.7rem; border: 2px solid #e5d5dc; border-radius: 10px;
+    font-family: inherit; font-size: 0.9rem;
+  }
+  .admin-coupon-form input[name="codigo"] { flex: 1; min-width: 160px; text-transform: uppercase; }
+  .admin-coupon-form input[name="valor"] { width: 110px; }
+  .admin-coupon-form input[name="usos_max"] { width: 180px; }
+  .admin-coupon-form input:focus, .admin-coupon-form select:focus { outline: none; border-color: #e08aa6; }
+  .admin-coupon-active { cursor: pointer; }
+  .admin-coupon-code { font-weight: 800; letter-spacing: 0.5px; }
   </style>
 </head>
 <body>
@@ -292,6 +304,42 @@
           <input type="text" id="especialNombre" class="admin-especial-name" placeholder="Nombre del men&uacute; (ej: Especial Halloween)" maxlength="40" />
           <button type="button" class="admin-btn" id="especialSaveBtn">Guardar</button>
           <span class="admin-especial-status" id="especialStatus"></span>
+        </div>
+      </section>
+
+      <!-- ===== CUPONES ===== -->
+      <section class="admin-table-section" id="couponsSection">
+        <h2>Cupones de descuento</h2>
+        <p class="admin-especial-hint">Crea c&oacute;digos de descuento por porcentaje o monto fijo. Los usos se descuentan autom&aacute;ticamente al confirmar un pedido.</p>
+
+        <form class="admin-coupon-form" id="couponForm">
+          <input name="codigo" type="text" placeholder="C&Oacute;DIGO (ej: HALLOWEEN10)" maxlength="24" required />
+          <select name="tipo">
+            <option value="porcentaje">% Porcentaje</option>
+            <option value="fijo">$ Monto fijo</option>
+          </select>
+          <input name="valor" type="number" min="0" step="1" placeholder="Valor" required />
+          <input name="usos_max" type="number" min="1" step="1" placeholder="Usos m&aacute;x (vac&iacute;o = ilimitado)" />
+          <button type="submit" class="admin-btn primary">Crear cupón</button>
+        </form>
+        <p class="admin-form-msg" id="couponFormMsg" hidden></p>
+
+        <div class="admin-table-wrap">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Código</th>
+                <th>Tipo</th>
+                <th>Valor</th>
+                <th>Usos</th>
+                <th>Activo</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="couponsTableBody">
+              <tr><td colspan="6" class="admin-empty">Cargando cupones.</td></tr>
+            </tbody>
+          </table>
         </div>
       </section>
 

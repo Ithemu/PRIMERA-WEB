@@ -284,15 +284,16 @@ async function placeOrder() {
     // Incrementar uso del cupón
     if (cuponAplicado?.id) { try { await incrementCouponUse(cuponAplicado.id); } catch (_) {} }
 
-    // Enviar correo (Edge Function con Resend). Si falla, no bloquea el pedido.
-    try { await sendOrderEmail(order, payload); } catch (e) { console.warn('Email no enviado:', e); }
+    // Enviar correo (Edge Function con Resend). No bloquea el pedido si falla.
+    let emailResult = null;
+    try { emailResult = await sendOrderEmail(order, payload); } catch (e) { console.warn('Email no enviado:', e); }
 
     // Limpiar carrito
     cart = [];
     saveCart(cart);
 
-    // Mostrar confirmación
-    showConfirm(order, data);
+    // Mostrar confirmación (sabiendo si el correo al comprador salió)
+    showConfirm(order, data, emailResult);
 
   } catch (e) {
     console.error(e);
@@ -304,22 +305,31 @@ async function placeOrder() {
 
 async function sendOrderEmail(order, payload) {
   // Llama a la Edge Function 'send-order-email' de Supabase.
-  // Si no está desplegada, hace fallback silencioso (no rompe el flujo).
+  // Devuelve la data de respuesta (incluye buyerDelivered) o null si falla.
   const mod = await import('./supabase.js');
   const supabaseClient = mod.supabase;
-  if (!supabaseClient) return;
-  const { error } = await supabaseClient.functions.invoke('send-order-email', {
+  if (!supabaseClient) return null;
+  const { data, error } = await supabaseClient.functions.invoke('send-order-email', {
     body: { order, payload },
   });
   if (error) throw error;
+  return data;
 }
 
-function showConfirm(order, data) {
+function showConfirm(order, data, emailResult) {
   const overlay = $('#orderConfirm');
   const msgEl = $('#confirmMsg');
   const codeEl = $('#confirmCode');
+  const buyerDelivered = !!(emailResult && emailResult.buyerDelivered);
+
   if (msgEl) {
-    msgEl.innerHTML = `Se ha enviado la información de tu pedido y tu boleta a tu correo <strong>${escapeHtml(data.email)}</strong>.<br>¡Muchas gracias por tu compra! 🧶`;
+    if (buyerDelivered) {
+      msgEl.innerHTML = `Se ha enviado la información de tu pedido y tu boleta a tu correo <strong>${escapeHtml(data.email)}</strong>.<br>¡Muchas gracias por tu compra! 🧶`;
+    } else {
+      // Pedido guardado, pero el correo al comprador aún no pudo salir (dominio pendiente).
+      msgEl.innerHTML = `Tu pedido <strong>${escapeHtml(order.codigo || order.id || '')}</strong> fue registrado con éxito.<br>
+      Te enviaremos la confirmación a <strong>${escapeHtml(data.email)}</strong> a la brevedad.<br>¡Muchas gracias por tu compra! 🧶`;
+    }
   }
   if (codeEl) codeEl.textContent = order.codigo || order.id || '—';
   if (overlay) overlay.hidden = false;
