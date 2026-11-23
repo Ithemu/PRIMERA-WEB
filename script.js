@@ -93,17 +93,73 @@ const STORAGE_KEY = 'patitas-de-lana-cart';
 
 let cart = loadCart();
 
+/* Sanea un item individual del carrito. Devuelve null si no es recuperable. */
+function sanitizeCartItem(raw) {
+  if (!raw || typeof raw !== 'object') return null;
+  const id = raw.id != null ? String(raw.id) : '';
+  if (!id) return null;
+  const price = Number(raw.price);
+  const qty = Math.floor(Number(raw.qty));
+  if (!Number.isFinite(price) || price < 0) return null;
+  if (!Number.isFinite(qty) || qty <= 0) return null;
+  const stockNum = Number(raw.stock);
+  return {
+    id,
+    name: String(raw.name ?? 'Producto'),
+    price,
+    emoji: raw.emoji ? String(raw.emoji) : '??',
+    image_url: raw.image_url || null,
+    stock: Number.isFinite(stockNum) ? stockNum : null,
+    qty,
+  };
+}
+
+/* Carga robusta del carrito:
+   - Devuelve SIEMPRE un array.
+   - Si el JSON es invalido o no es un array, reinicia el carrito.
+   - Descarta items corruptos y fusiona duplicados por id. */
 function loadCart() {
+  let raw = null;
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    return raw ? JSON.parse(raw) : [];
+    raw = localStorage.getItem(STORAGE_KEY);
   } catch {
     return [];
   }
+  if (raw == null || raw === '' || raw === 'undefined' || raw === 'null') return [];
+
+  let parsed;
+  try {
+    parsed = JSON.parse(raw);
+  } catch {
+    try { localStorage.removeItem(STORAGE_KEY); } catch {}
+    return [];
+  }
+
+  if (!Array.isArray(parsed)) {
+    try { localStorage.removeItem(STORAGE_KEY); } catch {}
+    return [];
+  }
+
+  const byId = new Map();
+  for (const item of parsed) {
+    const clean = sanitizeCartItem(item);
+    if (!clean) continue;
+    const prev = byId.get(clean.id);
+    if (prev) {
+      prev.qty += clean.qty;
+    } else {
+      byId.set(clean.id, clean);
+    }
+  }
+  return Array.from(byId.values());
 }
 
 function saveCart() {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(cart));
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(cart));
+  } catch (err) {
+    console.error('No se pudo guardar el carrito:', err);
+  }
 }
 
 /* ---------- Carga de productos desde Supabase ----------

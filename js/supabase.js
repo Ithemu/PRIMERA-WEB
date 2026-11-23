@@ -148,13 +148,16 @@ export async function createOrder(payload) {
   return data;
 }
 
-export async function fetchOrders() {
-  const { data, error } = await supabase
-    .from('pedidos')
-    .select('*')
-    .order('created_at', { ascending: false });
+/* ---------- Stock ----------    Descuenta stock de forma atomica en el servidor (Postgres) via RPC.    Recibe un array de items [{ id, qty }]. La RPC valida stock suficiente    y lanza error si no alcanza, para evitar sobreventa. */ export async function decrementStock(items) {
+  const limpios = (Array.isArray(items) ? items : [])
+    .map((it) => ({ id: String(it.id), qty: Number(it.qty) || 0 }))
+    .filter((it) => it.id && it.qty > 0);
+  if (limpios.length === 0) return { ok: true, skipped: true };
+  const { data, error } = await supabase.rpc('descontar_stock_pedido', {
+    items: limpios,
+  });
   if (error) throw error;
-  return data ?? [];
+  return data;
 }
 
 /* ---------- Cupones ---------- */

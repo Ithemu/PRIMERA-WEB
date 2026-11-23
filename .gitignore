@@ -4,3 +4,10 @@
 node_modules/
 .DS_Store
 Thumbs.db
+
+# Binarios locales y logs de tunel/servidor (no subir)
+cloudflared.exe
+server-out.log
+server-err.log
+tunnel-out.log
+tunnel-err.log
